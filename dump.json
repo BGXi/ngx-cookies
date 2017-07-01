@@ -1,0 +1,2289 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "src/cookies.js",
+    "content": "import {Injectable} from '@angular/core';\r\nimport {DOCUMENT} from '@angular/platform-browser';\r\nimport {Subject} from 'rxjs/Subject';\r\n\r\nimport {CookieOptions} from './cookie_options';\r\nimport {COOKIE_OPTIONS} from './di_tokens';\r\n\r\n/**\r\n * Provides access to the HTTP cookies.\r\n * See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies\r\n */\r\nexport class Cookies {\r\n\r\n  /**\r\n   * The class decorators.\r\n   * @type {Array}\r\n   */\r\n  static get annotations() {\r\n    return [new Injectable];\r\n  }\r\n\r\n  /**\r\n   * The constructor parameters.\r\n   * @type {Array}\r\n   */\r\n  static get parameters() {\r\n    return [COOKIE_OPTIONS, DOCUMENT];\r\n  }\r\n\r\n  /**\r\n   * Initializes a new instance of the class.\r\n   * @param {CookieOptions} cookieOptions The default cookie options.\r\n   * @param {HTMLDocument} document The underlying HTML document.\r\n   */\r\n  constructor(cookieOptions, document) {\r\n\r\n    /**\r\n     * The default cookie options.\r\n     * @type {CookieOptions}\r\n     */\r\n    this._defaults = cookieOptions;\r\n\r\n    /**\r\n     * The underlying HTML document.\r\n     * @type {HTMLDocument}\r\n     */\r\n    this._document = document;\r\n\r\n    /**\r\n     * The handler of \"changes\" events.\r\n     * @type {Subject<KeyValueChangeRecord>}\r\n     */\r\n    this._onChanges = new Subject;\r\n  }\r\n\r\n  /**\r\n   * The default cookie options.\r\n   * @type {CookieOptions}\r\n   */\r\n  get defaults() {\r\n    return this._defaults;\r\n  }\r\n\r\n  /**\r\n   * The keys of the cookies associated with the current document.\r\n   * @type {string[]}\r\n   */\r\n  get keys() {\r\n    let keys = this._document.cookie.replace(/((?:^|\\s*;)[^=]+)(?=;|$)|^\\s*|\\s*(?:=[^;]*)?(?:\\1|$)/g, '');\r\n    return keys.length ? keys.split(/\\s*(?:=[^;]*)?;\\s*/).map(key => decodeURIComponent(key)) : [];\r\n  }\r\n\r\n  /**\r\n   * The number of cookies associated with the current document.\r\n   * @type {number}\r\n   */\r\n  get length() {\r\n    return this.keys.length;\r\n  }\r\n\r\n  /**\r\n   * The stream of \"changes\" events.\r\n   * @type {Observable<KeyValueChangeRecord[]>}\r\n   */\r\n  get onChanges() {\r\n    return this._onChanges.asObservable();\r\n  }\r\n\r\n  /**\r\n   * Returns a new iterator that allows iterating the cookies associated with the current document.\r\n   */\r\n  *[Symbol.iterator]() {\r\n    for (let key of this.keys) yield [key, this.get(key)];\r\n  }\r\n\r\n  /**\r\n   * Removes all cookies associated with the current document.\r\n   */\r\n  clear() {\r\n    let changes = this.keys.map(key => ({currentValue: null, key, previousValue: this.get(key)}));\r\n    for (let key of this.keys) this._removeItem(key);\r\n    this._onChanges.next(changes);\r\n  }\r\n\r\n  /**\r\n   * Gets the value associated to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {*} defaultValue The default cookie value if it does not exist.\r\n   * @return {string} The cookie value, or the default value if the item is not found.\r\n   */\r\n  get(key, defaultValue = null) {\r\n    if (!this.has(key)) return defaultValue;\r\n\r\n    try {\r\n      let token = encodeURIComponent(key).replace(/[-.+*]/g, '\\\\$&');\r\n      let scanner = new RegExp(`(?:(?:^|.*;)\\\\s*${token}\\\\s*\\\\=\\\\s*([^;]*).*$)|^.*$`);\r\n      return decodeURIComponent(this._document.cookie.replace(scanner, '$1'));\r\n    }\r\n\r\n    catch (err) {\r\n      return defaultValue;\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Gets the deserialized value associated to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {*} defaultValue The default cookie value if it does not exist.\r\n   * @return {*} The deserialized cookie value, or the default value if the item is not found.\r\n   */\r\n  getObject(key, defaultValue = null) {\r\n    try {\r\n      let value = this.get(key);\r\n      return typeof value == 'string' ? JSON.parse(value) : defaultValue;\r\n    }\r\n\r\n    catch (err) {\r\n      return defaultValue;\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Gets a value indicating whether the current document has a cookie with the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @return {boolean} `true` if the current document has a cookie with the specified key, otherwise `false`.\r\n   */\r\n  has(key) {\r\n    let token = encodeURIComponent(key).replace(/[-.+*]/g, '\\\\$&');\r\n    return new RegExp(`(?:^|;\\\\s*)${token}\\\\s*\\\\=`).test(this._document.cookie);\r\n  }\r\n\r\n  /**\r\n   * Removes the value associated to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {CookieOptions} [options] The cookie options.\r\n   */\r\n  remove(key, options = this.defaults) {\r\n    let previousValue = this.get(key);\r\n    this._removeItem(key, options);\r\n    this._onChanges.next([{currentValue: null, key, previousValue}]);\r\n  }\r\n\r\n  /**\r\n   * Associates a given value to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {string} value The cookie value.\r\n   * @param {CookieOptions|Date} [options] The cookie options, or the expiration date and time for the cookie.\r\n   * @throws {TypeError} The specified key is invalid.\r\n   */\r\n  set(key, value, options = this.defaults) {\r\n    if (!key.length || /^(domain|expires|max-age|path|secure)$/i.test(key)) throw new TypeError('Invalid cookie name.');\r\n\r\n    let cookieValue = `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;\r\n    if (options instanceof Date) options = new CookieOptions(options, this.defaults.path, this.defaults.domain, this.defaults.secure);\r\n    if (options.toString().length) cookieValue += `; ${options}`;\r\n\r\n    let previousValue = this.get(key);\r\n    this._document.cookie = cookieValue;\r\n    this._onChanges.next([{currentValue: value, key, previousValue}]);\r\n  }\r\n\r\n  /**\r\n   * Serializes and associates a given value to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {*} value The cookie value.\r\n   * @param {CookieOptions|Date} [options] The cookie options, or the expiration date and time for the cookie.\r\n   */\r\n  setObject(key, value, options = this.defaults) {\r\n    this.set(key, JSON.stringify(value), options);\r\n  }\r\n\r\n  /**\r\n   * Returns a string representation of this object.\r\n   * @return {string} The string representation of this object.\r\n   */\r\n  toString() {\r\n    return this._document.cookie;\r\n  }\r\n\r\n  /**\r\n   * Removes the value associated to the specified key.\r\n   * @param {string} key The cookie name.\r\n   * @param {CookieOptions} [options] The cookie options.\r\n   */\r\n  _removeItem(key, options = this.defaults) {\r\n    if (!this.has(key)) return;\r\n\r\n    let {domain, path} = options;\r\n    let cookieOptions = new CookieOptions(0, path, domain);\r\n    this._document.cookie = `${encodeURIComponent(key)}=; ${cookieOptions}`;\r\n  }\r\n}\r\n",
+    "static": true,
+    "longname": "src/cookies.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "class",
+    "name": "Cookies",
+    "memberof": "src/cookies.js",
+    "static": true,
+    "longname": "src/cookies.js~Cookies",
+    "access": null,
+    "export": true,
+    "importPath": "@cedx/ngx-cookies/src/cookies.js",
+    "importStyle": "{Cookies}",
+    "description": "Provides access to the HTTP cookies.\nSee: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies",
+    "lineNumber": 12,
+    "interface": false
+  },
+  {
+    "__docId__": 2,
+    "kind": "get",
+    "name": "annotations",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/cookies.js~Cookies.annotations",
+    "access": null,
+    "description": "The class decorators.",
+    "lineNumber": 18,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Array"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "get",
+    "name": "parameters",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/cookies.js~Cookies.parameters",
+    "access": null,
+    "description": "The constructor parameters.",
+    "lineNumber": 26,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Array"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#constructor",
+    "access": null,
+    "description": "Initializes a new instance of the class.",
+    "lineNumber": 35,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "CookieOptions"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "cookieOptions",
+        "description": "The default cookie options."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "HTMLDocument"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "document",
+        "description": "The underlying HTML document."
+      }
+    ]
+  },
+  {
+    "__docId__": 5,
+    "kind": "member",
+    "name": "_defaults",
+    "memberof": "src/cookies.js~Cookies",
+    "static": false,
+    "longname": "src/cookies.js~Cookies#_defaults",
+    "access": null,
+    "description": "The default cookie options.",
+    "lineNumber": 41,
+    "type": {
+      "nullable": null,
+      "types": [
+        "CookieOptions"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "member",
+    "name": "_document",
+    "memberof": "src/cookies.js~Cookies",
+    "static": false,
+    "longname": "src/cookies.js~Cookies#_document",
+    "access": null,
+    "description": "The underlying HTML document.",
+    "lineNumber": 47,
+    "type": {
+      "nullable": null,
+      "types": [
+        "HTMLDocument"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "member",
+    "name": "_onChanges",
+    "memberof": "src/cookies.js~Cookies",
+    "static": false,
+    "longname": "src/cookies.js~Cookies#_onChanges",
+    "access": null,
+    "description": "The handler of \"changes\" events.",
+    "lineNumber": 53,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Subject<KeyValueChangeRecord>"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "get",
+    "name": "defaults",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#defaults",
+    "access": null,
+    "description": "The default cookie options.",
+    "lineNumber": 60,
+    "type": {
+      "nullable": null,
+      "types": [
+        "CookieOptions"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "get",
+    "name": "keys",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#keys",
+    "access": null,
+    "description": "The keys of the cookies associated with the current document.",
+    "lineNumber": 68,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 10,
+    "kind": "get",
+    "name": "length",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#length",
+    "access": null,
+    "description": "The number of cookies associated with the current document.",
+    "lineNumber": 77,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 11,
+    "kind": "get",
+    "name": "onChanges",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#onChanges",
+    "access": null,
+    "description": "The stream of \"changes\" events.",
+    "lineNumber": 85,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Observable<KeyValueChangeRecord[]>"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "method",
+    "name": "[Symbol.iterator]",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": true,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#[Symbol.iterator]",
+    "access": null,
+    "description": "Returns a new iterator that allows iterating the cookies associated with the current document.",
+    "lineNumber": 92,
+    "params": []
+  },
+  {
+    "__docId__": 13,
+    "kind": "method",
+    "name": "clear",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#clear",
+    "access": null,
+    "description": "Removes all cookies associated with the current document.",
+    "lineNumber": 99,
+    "params": []
+  },
+  {
+    "__docId__": 14,
+    "kind": "method",
+    "name": "get",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#get",
+    "access": null,
+    "description": "Gets the value associated to the specified key.",
+    "lineNumber": 111,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "defaultValue",
+        "description": "The default cookie value if it does not exist."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "The cookie value, or the default value if the item is not found."
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "method",
+    "name": "getObject",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#getObject",
+    "access": null,
+    "description": "Gets the deserialized value associated to the specified key.",
+    "lineNumber": 131,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "defaultValue",
+        "description": "The default cookie value if it does not exist."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "The deserialized cookie value, or the default value if the item is not found."
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "method",
+    "name": "has",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#has",
+    "access": null,
+    "description": "Gets a value indicating whether the current document has a cookie with the specified key.",
+    "lineNumber": 147,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "`true` if the current document has a cookie with the specified key, otherwise `false`."
+    }
+  },
+  {
+    "__docId__": 17,
+    "kind": "method",
+    "name": "remove",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#remove",
+    "access": null,
+    "description": "Removes the value associated to the specified key.",
+    "lineNumber": 157,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CookieOptions"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": "The cookie options."
+      }
+    ]
+  },
+  {
+    "__docId__": 18,
+    "kind": "method",
+    "name": "set",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#set",
+    "access": null,
+    "description": "Associates a given value to the specified key.",
+    "lineNumber": 170,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": "The cookie value."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CookieOptions",
+          "Date"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": "The cookie options, or the expiration date and time for the cookie."
+      }
+    ],
+    "throws": [
+      {
+        "types": [
+          "TypeError"
+        ],
+        "description": "The specified key is invalid."
+      }
+    ]
+  },
+  {
+    "__docId__": 19,
+    "kind": "method",
+    "name": "setObject",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#setObject",
+    "access": null,
+    "description": "Serializes and associates a given value to the specified key.",
+    "lineNumber": 188,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": "The cookie value."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CookieOptions",
+          "Date"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": "The cookie options, or the expiration date and time for the cookie."
+      }
+    ]
+  },
+  {
+    "__docId__": 20,
+    "kind": "method",
+    "name": "toString",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#toString",
+    "access": null,
+    "description": "Returns a string representation of this object.",
+    "lineNumber": 196,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "The string representation of this object."
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "method",
+    "name": "_removeItem",
+    "memberof": "src/cookies.js~Cookies",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookies.js~Cookies#_removeItem",
+    "access": null,
+    "description": "Removes the value associated to the specified key.",
+    "lineNumber": 205,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The cookie name."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CookieOptions"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": "The cookie options."
+      }
+    ]
+  },
+  {
+    "__docId__": 22,
+    "kind": "file",
+    "name": "src/cookie_module.js",
+    "content": "import {APP_BASE_HREF} from '@angular/common';\r\nimport {NgModule} from '@angular/core';\r\n\r\nimport {CookieOptions} from './cookie_options';\r\nimport {Cookies} from './cookies';\r\nimport {COOKIE_OPTIONS} from './di_tokens';\r\n\r\n/**\r\n * The cookie module.\r\n */\r\nexport class CookieModule {\r\n\r\n  /**\r\n   * The class decorators.\r\n   * @type {Array}\r\n   */\r\n  static get annotations() {\r\n    return [new NgModule({\r\n      providers: [\r\n        {provide: COOKIE_OPTIONS, useFactory: APP_BASE_HREF => new CookieOptions(null, APP_BASE_HREF), deps: [APP_BASE_HREF]},\r\n        Cookies\r\n      ]\r\n    })];\r\n  }\r\n}\r\n",
+    "static": true,
+    "longname": "src/cookie_module.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 23,
+    "kind": "class",
+    "name": "CookieModule",
+    "memberof": "src/cookie_module.js",
+    "static": true,
+    "longname": "src/cookie_module.js~CookieModule",
+    "access": null,
+    "export": true,
+    "importPath": "@cedx/ngx-cookies/src/cookie_module.js",
+    "importStyle": "{CookieModule}",
+    "description": "The cookie module.",
+    "lineNumber": 11,
+    "interface": false
+  },
+  {
+    "__docId__": 24,
+    "kind": "get",
+    "name": "annotations",
+    "memberof": "src/cookie_module.js~CookieModule",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/cookie_module.js~CookieModule.annotations",
+    "access": null,
+    "description": "The class decorators.",
+    "lineNumber": 17,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Array"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "file",
+    "name": "src/cookie_options.js",
+    "content": "/**\r\n * Defines the attributes of a HTTP cookie.\r\n */\r\nexport class CookieOptions {\r\n\r\n  /**\r\n   * Initializes a new instance of the class.\r\n   * @param {Date|number|string} [expires] The expiration date and time for the cookie.\r\n   * @param {string} [path] The path to which the cookie applies.\r\n   * @param {string} [domain] The domain for which the cookie is valid.\r\n   * @param {boolean} [secure] Value indicating whether to transmit the cookie over HTTPS only.\r\n   */\r\n  constructor(expires = null, path = '', domain = '', secure = false) {\r\n\r\n    /**\r\n     * The domain for which the cookie is valid.\r\n     * @type {string}\r\n     */\r\n    this.domain = domain;\r\n\r\n    /**\r\n     * The expiration date and time for the cookie.\r\n     * @type {Date}\r\n     */\r\n    this.expires = expires instanceof Date ? expires : null;\r\n    if (typeof expires == 'number' || typeof expires == 'string') this.expires = new Date(expires);\r\n\r\n    /**\r\n     * The path to which the cookie applies.\r\n     * @type {string}\r\n     */\r\n    this.path = path;\r\n\r\n    /**\r\n     * Value indicating whether to transmit the cookie over HTTPS only.\r\n     * @type {boolean}\r\n     */\r\n    this.secure = secure;\r\n  }\r\n\r\n  /**\r\n   * Converts this object to a map in JSON format.\r\n   * @return {object} The map in JSON format corresponding to this object.\r\n   */\r\n  toJSON() {\r\n    return {\r\n      domain: this.domain,\r\n      expires: this.expires ? this.expires.toISOString() : null,\r\n      path: this.path,\r\n      secure: this.secure\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Returns a string representation of this object.\r\n   * @return {string} The string representation of this object.\r\n   */\r\n  toString() {\r\n    let value = [];\r\n    if (this.expires) value.push(`expires=${this.expires.toUTCString()}`);\r\n    if (this.domain.length) value.push(`domain=${this.domain}`);\r\n    if (this.path.length) value.push(`path=${this.path}`);\r\n    if (this.secure) value.push('secure');\r\n    return value.join('; ');\r\n  }\r\n}\r\n",
+    "static": true,
+    "longname": "src/cookie_options.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 26,
+    "kind": "class",
+    "name": "CookieOptions",
+    "memberof": "src/cookie_options.js",
+    "static": true,
+    "longname": "src/cookie_options.js~CookieOptions",
+    "access": null,
+    "export": true,
+    "importPath": "@cedx/ngx-cookies/src/cookie_options.js",
+    "importStyle": "{CookieOptions}",
+    "description": "Defines the attributes of a HTTP cookie.",
+    "lineNumber": 4,
+    "interface": false
+  },
+  {
+    "__docId__": 27,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#constructor",
+    "access": null,
+    "description": "Initializes a new instance of the class.",
+    "lineNumber": 13,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Date",
+          "number",
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "expires",
+        "description": "The expiration date and time for the cookie."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "path",
+        "description": "The path to which the cookie applies."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "domain",
+        "description": "The domain for which the cookie is valid."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "secure",
+        "description": "Value indicating whether to transmit the cookie over HTTPS only."
+      }
+    ]
+  },
+  {
+    "__docId__": 28,
+    "kind": "member",
+    "name": "domain",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#domain",
+    "access": null,
+    "description": "The domain for which the cookie is valid.",
+    "lineNumber": 19,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "member",
+    "name": "expires",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#expires",
+    "access": null,
+    "description": "The expiration date and time for the cookie.",
+    "lineNumber": 25,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Date"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "member",
+    "name": "expires",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#expires",
+    "access": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 31,
+    "kind": "member",
+    "name": "path",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#path",
+    "access": null,
+    "description": "The path to which the cookie applies.",
+    "lineNumber": 32,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "member",
+    "name": "secure",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#secure",
+    "access": null,
+    "description": "Value indicating whether to transmit the cookie over HTTPS only.",
+    "lineNumber": 38,
+    "type": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "method",
+    "name": "toJSON",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#toJSON",
+    "access": null,
+    "description": "Converts this object to a map in JSON format.",
+    "lineNumber": 45,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "object"
+      ],
+      "spread": false,
+      "description": "The map in JSON format corresponding to this object."
+    }
+  },
+  {
+    "__docId__": 34,
+    "kind": "method",
+    "name": "toString",
+    "memberof": "src/cookie_options.js~CookieOptions",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/cookie_options.js~CookieOptions#toString",
+    "access": null,
+    "description": "Returns a string representation of this object.",
+    "lineNumber": 58,
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "The string representation of this object."
+    }
+  },
+  {
+    "__docId__": 35,
+    "kind": "file",
+    "name": "src/di_tokens.js",
+    "content": "import {InjectionToken} from '@angular/core';\r\n\r\n/**\r\n * An injection token representing the default cookie options.\r\n * @type {InjectionToken}\r\n */\r\nexport const COOKIE_OPTIONS = new InjectionToken('COOKIE_OPTIONS');\r\n",
+    "static": true,
+    "longname": "src/di_tokens.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 36,
+    "kind": "variable",
+    "name": "COOKIE_OPTIONS",
+    "memberof": "src/di_tokens.js",
+    "static": true,
+    "longname": "src/di_tokens.js~COOKIE_OPTIONS",
+    "access": null,
+    "export": true,
+    "importPath": "@cedx/ngx-cookies/src/di_tokens.js",
+    "importStyle": "{COOKIE_OPTIONS}",
+    "description": "An injection token representing the default cookie options.",
+    "lineNumber": 7,
+    "type": {
+      "nullable": null,
+      "types": [
+        "InjectionToken"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 37,
+    "kind": "file",
+    "name": "src/index.js",
+    "content": "export * from './cookie_module';\r\nexport * from './cookie_options';\r\nexport * from './cookies';\r\nexport * from './di_tokens';\r\n",
+    "static": true,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 49,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 90,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 91,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 92,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 93,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 94,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 95,
+    "kind": "testFile",
+    "name": "test/cookies_test.js",
+    "content": "'use strict';\r\n\r\nimport {expect} from 'chai';\r\nimport CookieMock from 'ec.cookie-mock';\r\nimport {afterEach, describe, it} from 'mocha';\r\nimport {CookieOptions, Cookies} from '../src/index';\r\n\r\n/**\r\n * @test {Cookies}\r\n */\r\ndescribe('Cookies', () => {\r\n\r\n  /**\r\n   * @test {Cookies#keys}\r\n   */\r\n  describe('#keys', () => {\r\n    it('should return an empty array if the current document has no associated cookie', () => {\r\n      expect(new Cookies(new CookieOptions, new CookieMock).keys).to.be.an('array').that.is.empty;\r\n    });\r\n\r\n    it('should return the keys of the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n\r\n      let keys = new Cookies(new CookieOptions, backend).keys;\r\n      expect(keys).to.be.an('array').and.have.lengthOf(2);\r\n      expect(keys[0]).to.equal('foo');\r\n      expect(keys[1]).to.equal('bar');\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#length}\r\n   */\r\n  describe('#length', () => {\r\n    it('should return zero if the current document has no associated cookie', () => {\r\n      expect(new Cookies(new CookieOptions, new CookieMock)).to.have.lengthOf(0);\r\n    });\r\n\r\n    it('should return the number of cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n      expect(new Cookies(new CookieOptions, backend)).to.have.lengthOf(2);\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#onChanges}\r\n   */\r\n  describe('#onChanges', () => {\r\n    let subscription;\r\n    afterEach('cancel the subscription', () =>\r\n      subscription.unsubscribe()\r\n    );\r\n\r\n    it('should trigger an event when a cookie is added', done => {\r\n      let cookies = new Cookies(new CookieOptions, new CookieMock);\r\n      subscription = cookies.onChanges.subscribe(changes => {\r\n        expect(changes).to.be.an('array').and.have.lengthOf(1);\r\n\r\n        let record = changes[0];\r\n        expect(record).to.be.an('object');\r\n        expect(record).to.have.property('key').that.equal('foo');\r\n        expect(record).to.have.property('currentValue').that.equal('bar');\r\n        expect(record).to.have.property('previousValue').that.is.null;\r\n\r\n        done();\r\n      });\r\n\r\n      cookies.set('foo', 'bar');\r\n    });\r\n\r\n    it('should trigger an event when a cookie is updated', done => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      subscription = cookies.onChanges.subscribe(changes => {\r\n        expect(changes).to.be.an('array').and.have.lengthOf(1);\r\n\r\n        let record = changes[0];\r\n        expect(record).to.be.an('object');\r\n        expect(record).to.have.property('key').that.equal('foo');\r\n        expect(record).to.have.property('currentValue').that.equal('baz');\r\n        expect(record).to.have.property('previousValue').that.equal('bar');\r\n\r\n        done();\r\n      });\r\n\r\n      cookies.set('foo', 'baz');\r\n    });\r\n\r\n    it('should trigger an event when a cookie is removed', done => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      subscription = cookies.onChanges.subscribe(changes => {\r\n        expect(changes).to.be.an('array').and.have.lengthOf(1);\r\n\r\n        let record = changes[0];\r\n        expect(record).to.be.an('object');\r\n        expect(record).to.have.property('key').that.equal('foo');\r\n        expect(record).to.have.property('currentValue').that.is.null;\r\n        expect(record).to.have.property('previousValue').that.equal('bar');\r\n\r\n        done();\r\n      });\r\n\r\n      cookies.remove('foo');\r\n    });\r\n\r\n    it('should trigger an event when all the cookies are removed', done => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      subscription = cookies.onChanges.subscribe(changes => {\r\n        expect(changes).to.be.an('array').and.have.lengthOf(2);\r\n\r\n        let record = changes[0];\r\n        expect(record).to.be.an('object');\r\n        expect(record).to.have.property('key').that.equal('foo');\r\n        expect(record).to.have.property('currentValue').that.is.null;\r\n        expect(record).to.have.property('previousValue').that.equal('bar');\r\n\r\n        record = changes[1];\r\n        expect(record).to.be.an('object');\r\n        expect(record).to.have.property('key').that.equal('bar');\r\n        expect(record).to.have.property('currentValue').that.is.null;\r\n        expect(record).to.have.property('previousValue').that.equal('baz');\r\n\r\n        done();\r\n      });\r\n\r\n      cookies.clear();\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#Symbol.iterator}\r\n   */\r\n  describe('#[Symbol.iterator]()', () => {\r\n    it('should return a done iterator if the current document has no associated cookie', () => {\r\n      let cookies = new Cookies(new CookieOptions, new CookieMock);\r\n      let iterator = cookies[Symbol.iterator]();\r\n      expect(iterator.next().done).to.be.true;\r\n    });\r\n\r\n    it('should return a value iterator if the current document has associated cookies', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      let iterator = cookies[Symbol.iterator]();\r\n\r\n      let next = iterator.next();\r\n      expect(next.done).to.be.false;\r\n      expect(next.value).to.be.an('array');\r\n      expect(next.value[0]).to.equal('foo');\r\n      expect(next.value[1]).to.equal('bar');\r\n\r\n      next = iterator.next();\r\n      expect(next.done).to.be.false;\r\n      expect(next.value[0]).to.equal('bar');\r\n      expect(next.value[1]).to.equal('baz');\r\n      expect(iterator.next().done).to.be.true;\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#clear}\r\n   */\r\n  describe('#clear()', () => {\r\n    it('should remove all the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      cookies.clear();\r\n      expect(backend.cookie).to.not.contain('foo');\r\n      expect(backend.cookie).to.not.contain('bar');\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#get}\r\n   */\r\n  describe('#get()', () => {\r\n    it('should properly get the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n\r\n      expect(cookies.get('foo')).to.be.null;\r\n      expect(cookies.get('foo', '123')).to.equal('123');\r\n\r\n      backend.cookie = 'foo=bar';\r\n      expect(cookies.get('foo')).to.equal('bar');\r\n\r\n      backend.cookie = 'foo=123';\r\n      expect(cookies.get('foo')).to.equal('123');\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#getObject}\r\n   */\r\n  describe('#getObject()', () => {\r\n    it('should properly get the deserialized cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n\r\n      expect(cookies.getObject('foo')).to.be.null;\r\n      expect(cookies.getObject('foo', {key: 'value'})).to.deep.equal({key: 'value'});\r\n\r\n      backend.cookie = 'foo=123';\r\n      expect(cookies.getObject('foo')).to.equal(123);\r\n\r\n      backend.cookie = 'foo=%22bar%22';\r\n      expect(cookies.getObject('foo')).to.equal('bar');\r\n\r\n      backend.cookie = 'foo=%7B%22key%22%3A%22value%22%7D';\r\n      expect(cookies.getObject('foo')).to.be.an('object')\r\n        .and.have.property('key').that.equal('value');\r\n    });\r\n\r\n    it('should return the default value if the value can\\'t be deserialized', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      expect(cookies.getObject('foo', 'defaultValue')).to.equal('defaultValue');\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#has}\r\n   */\r\n  describe('#has()', () => {\r\n    it('should return `false` if the current document has an associated cookie with the specified key', () => {\r\n      expect(new Cookies(new CookieOptions, new CookieMock).has('foo')).to.be.false;\r\n    });\r\n\r\n    it('should return `true` if the current document does not have an associated cookie with the specified key', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      expect(cookies.has('foo')).to.be.true;\r\n      expect(cookies.has('bar')).to.be.false;\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#remove}\r\n   */\r\n  describe('#remove()', () => {\r\n    it('should properly remove the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      backend.cookie = 'foo=bar';\r\n      backend.cookie = 'bar=baz';\r\n\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      cookies.remove('foo');\r\n      expect(backend.cookie).to.not.contain('foo');\r\n      expect(backend.cookie).to.contain('bar=baz');\r\n\r\n      cookies.remove('bar');\r\n      expect(backend.cookie).to.not.contain('bar');\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#set}\r\n   */\r\n  describe('#set()', () => {\r\n    it('should properly set the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      expect(backend.cookie).to.not.contain('foo');\r\n\r\n      cookies.set('foo', 'bar');\r\n      expect(backend.cookie).to.contain('foo=bar');\r\n\r\n      cookies.set('foo', '123');\r\n      expect(backend.cookie).to.contain('foo=123');\r\n    });\r\n\r\n    it('should throw an error if the specified key is a reserved word', () => {\r\n      let cookies = new Cookies(new CookieOptions, new CookieMock);\r\n      expect(() => cookies.set('domain', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.set('expires', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.set('max-age', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.set('path', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.set('secure', 'foo')).to.throw(TypeError);\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#setObject}\r\n   */\r\n  describe('#setObject()', () => {\r\n    it('should properly serialize and set the cookies associated with the current document', () => {\r\n      let backend = new CookieMock;\r\n      let cookies = new Cookies(new CookieOptions, backend);\r\n      expect(backend.cookie).to.not.contain('foo');\r\n\r\n      cookies.setObject('foo', 123);\r\n      expect(backend.cookie).to.contain('foo=123');\r\n\r\n      cookies.setObject('foo', 'bar');\r\n      expect(backend.cookie).to.contain('foo=%22bar%22');\r\n\r\n      cookies.setObject('foo', {key: 'value'});\r\n      expect(backend.cookie).to.contain('foo=%7B%22key%22%3A%22value%22%7D');\r\n    });\r\n\r\n    it('should throw an error if the specified key is a reserved word', () => {\r\n      let cookies = new Cookies(new CookieOptions, new CookieMock);\r\n      expect(() => cookies.setObject('domain', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.setObject('expires', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.setObject('max-age', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.setObject('path', 'foo')).to.throw(TypeError);\r\n      expect(() => cookies.setObject('secure', 'foo')).to.throw(TypeError);\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {Cookies#toString}\r\n   */\r\n  describe('#toString()', () => {\r\n    it('should return an empty string for a newly created instance', () => {\r\n      expect(String(new Cookies(new CookieOptions, new CookieMock))).to.be.empty;\r\n    });\r\n\r\n    it('should return a format like \"<key>=<value>; expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance', () => {\r\n      let cookies = new Cookies(new CookieOptions(null, '/path', 'domain.com', true), new CookieMock);\r\n      cookies.set('foo', 'bar');\r\n      expect(String(cookies)).to.equal('foo=bar; domain=domain.com; path=/path; secure');\r\n\r\n      cookies.set('bar', 'baz', new Date(Date.now() + 3600000));\r\n      expect(String(cookies)).to.contain('bar=baz; expires=').and.contain('domain=domain.com; path=/path; secure');\r\n    });\r\n  });\r\n});\r\n",
+    "static": true,
+    "longname": "test/cookies_test.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 96,
+    "kind": "testDescribe",
+    "name": "describe0",
+    "testId": 0,
+    "memberof": "test/cookies_test.js",
+    "testDepth": 0,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0",
+    "access": null,
+    "description": "Cookies",
+    "lineNumber": 11,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies}"
+      }
+    ],
+    "testTargets": [
+      "Cookies"
+    ]
+  },
+  {
+    "__docId__": 97,
+    "kind": "testDescribe",
+    "name": "describe1",
+    "testId": 1,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe1",
+    "access": null,
+    "description": "#keys",
+    "lineNumber": 16,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#keys}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#keys"
+    ]
+  },
+  {
+    "__docId__": 98,
+    "kind": "testIt",
+    "name": "it2",
+    "testId": 2,
+    "memberof": "test/cookies_test.js~describe0.describe1",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe1.it2",
+    "access": null,
+    "description": "should return an empty array if the current document has no associated cookie",
+    "lineNumber": 17
+  },
+  {
+    "__docId__": 99,
+    "kind": "testIt",
+    "name": "it3",
+    "testId": 3,
+    "memberof": "test/cookies_test.js~describe0.describe1",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe1.it3",
+    "access": null,
+    "description": "should return the keys of the cookies associated with the current document",
+    "lineNumber": 21
+  },
+  {
+    "__docId__": 100,
+    "kind": "testDescribe",
+    "name": "describe4",
+    "testId": 4,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe4",
+    "access": null,
+    "description": "#length",
+    "lineNumber": 36,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#length}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#length"
+    ]
+  },
+  {
+    "__docId__": 101,
+    "kind": "testIt",
+    "name": "it5",
+    "testId": 5,
+    "memberof": "test/cookies_test.js~describe0.describe4",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe4.it5",
+    "access": null,
+    "description": "should return zero if the current document has no associated cookie",
+    "lineNumber": 37
+  },
+  {
+    "__docId__": 102,
+    "kind": "testIt",
+    "name": "it6",
+    "testId": 6,
+    "memberof": "test/cookies_test.js~describe0.describe4",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe4.it6",
+    "access": null,
+    "description": "should return the number of cookies associated with the current document",
+    "lineNumber": 41
+  },
+  {
+    "__docId__": 103,
+    "kind": "testDescribe",
+    "name": "describe7",
+    "testId": 7,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe7",
+    "access": null,
+    "description": "#onChanges",
+    "lineNumber": 52,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#onChanges}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#onChanges"
+    ]
+  },
+  {
+    "__docId__": 104,
+    "kind": "testIt",
+    "name": "it8",
+    "testId": 8,
+    "memberof": "test/cookies_test.js~describe0.describe7",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe7.it8",
+    "access": null,
+    "description": "should trigger an event when a cookie is added",
+    "lineNumber": 58
+  },
+  {
+    "__docId__": 105,
+    "kind": "testIt",
+    "name": "it9",
+    "testId": 9,
+    "memberof": "test/cookies_test.js~describe0.describe7",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe7.it9",
+    "access": null,
+    "description": "should trigger an event when a cookie is updated",
+    "lineNumber": 75
+  },
+  {
+    "__docId__": 106,
+    "kind": "testIt",
+    "name": "it10",
+    "testId": 10,
+    "memberof": "test/cookies_test.js~describe0.describe7",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe7.it10",
+    "access": null,
+    "description": "should trigger an event when a cookie is removed",
+    "lineNumber": 95
+  },
+  {
+    "__docId__": 107,
+    "kind": "testIt",
+    "name": "it11",
+    "testId": 11,
+    "memberof": "test/cookies_test.js~describe0.describe7",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe7.it11",
+    "access": null,
+    "description": "should trigger an event when all the cookies are removed",
+    "lineNumber": 115
+  },
+  {
+    "__docId__": 108,
+    "kind": "testDescribe",
+    "name": "describe12",
+    "testId": 12,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe12",
+    "access": null,
+    "description": "#[Symbol.iterator]()",
+    "lineNumber": 146,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#Symbol.iterator}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#Symbol.iterator"
+    ]
+  },
+  {
+    "__docId__": 109,
+    "kind": "testIt",
+    "name": "it13",
+    "testId": 13,
+    "memberof": "test/cookies_test.js~describe0.describe12",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe12.it13",
+    "access": null,
+    "description": "should return a done iterator if the current document has no associated cookie",
+    "lineNumber": 147
+  },
+  {
+    "__docId__": 110,
+    "kind": "testIt",
+    "name": "it14",
+    "testId": 14,
+    "memberof": "test/cookies_test.js~describe0.describe12",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe12.it14",
+    "access": null,
+    "description": "should return a value iterator if the current document has associated cookies",
+    "lineNumber": 153
+  },
+  {
+    "__docId__": 111,
+    "kind": "testDescribe",
+    "name": "describe15",
+    "testId": 15,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe15",
+    "access": null,
+    "description": "#clear()",
+    "lineNumber": 178,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#clear}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#clear"
+    ]
+  },
+  {
+    "__docId__": 112,
+    "kind": "testIt",
+    "name": "it16",
+    "testId": 16,
+    "memberof": "test/cookies_test.js~describe0.describe15",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe15.it16",
+    "access": null,
+    "description": "should remove all the cookies associated with the current document",
+    "lineNumber": 179
+  },
+  {
+    "__docId__": 113,
+    "kind": "testDescribe",
+    "name": "describe17",
+    "testId": 17,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe17",
+    "access": null,
+    "description": "#get()",
+    "lineNumber": 194,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#get}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#get"
+    ]
+  },
+  {
+    "__docId__": 114,
+    "kind": "testIt",
+    "name": "it18",
+    "testId": 18,
+    "memberof": "test/cookies_test.js~describe0.describe17",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe17.it18",
+    "access": null,
+    "description": "should properly get the cookies associated with the current document",
+    "lineNumber": 195
+  },
+  {
+    "__docId__": 115,
+    "kind": "testDescribe",
+    "name": "describe19",
+    "testId": 19,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe19",
+    "access": null,
+    "description": "#getObject()",
+    "lineNumber": 213,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#getObject}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#getObject"
+    ]
+  },
+  {
+    "__docId__": 116,
+    "kind": "testIt",
+    "name": "it20",
+    "testId": 20,
+    "memberof": "test/cookies_test.js~describe0.describe19",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe19.it20",
+    "access": null,
+    "description": "should properly get the deserialized cookies associated with the current document",
+    "lineNumber": 214
+  },
+  {
+    "__docId__": 117,
+    "kind": "testIt",
+    "name": "it21",
+    "testId": 21,
+    "memberof": "test/cookies_test.js~describe0.describe19",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe19.it21",
+    "access": null,
+    "description": "should return the default value if the value can't be deserialized",
+    "lineNumber": 232
+  },
+  {
+    "__docId__": 118,
+    "kind": "testDescribe",
+    "name": "describe22",
+    "testId": 22,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe22",
+    "access": null,
+    "description": "#has()",
+    "lineNumber": 244,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#has}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#has"
+    ]
+  },
+  {
+    "__docId__": 119,
+    "kind": "testIt",
+    "name": "it23",
+    "testId": 23,
+    "memberof": "test/cookies_test.js~describe0.describe22",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe22.it23",
+    "access": null,
+    "description": "should return `false` if the current document has an associated cookie with the specified key",
+    "lineNumber": 245
+  },
+  {
+    "__docId__": 120,
+    "kind": "testIt",
+    "name": "it24",
+    "testId": 24,
+    "memberof": "test/cookies_test.js~describe0.describe22",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe22.it24",
+    "access": null,
+    "description": "should return `true` if the current document does not have an associated cookie with the specified key",
+    "lineNumber": 249
+  },
+  {
+    "__docId__": 121,
+    "kind": "testDescribe",
+    "name": "describe25",
+    "testId": 25,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe25",
+    "access": null,
+    "description": "#remove()",
+    "lineNumber": 262,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#remove}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#remove"
+    ]
+  },
+  {
+    "__docId__": 122,
+    "kind": "testIt",
+    "name": "it26",
+    "testId": 26,
+    "memberof": "test/cookies_test.js~describe0.describe25",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe25.it26",
+    "access": null,
+    "description": "should properly remove the cookies associated with the current document",
+    "lineNumber": 263
+  },
+  {
+    "__docId__": 123,
+    "kind": "testDescribe",
+    "name": "describe27",
+    "testId": 27,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe27",
+    "access": null,
+    "description": "#set()",
+    "lineNumber": 281,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#set}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#set"
+    ]
+  },
+  {
+    "__docId__": 124,
+    "kind": "testIt",
+    "name": "it28",
+    "testId": 28,
+    "memberof": "test/cookies_test.js~describe0.describe27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe27.it28",
+    "access": null,
+    "description": "should properly set the cookies associated with the current document",
+    "lineNumber": 282
+  },
+  {
+    "__docId__": 125,
+    "kind": "testIt",
+    "name": "it29",
+    "testId": 29,
+    "memberof": "test/cookies_test.js~describe0.describe27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe27.it29",
+    "access": null,
+    "description": "should throw an error if the specified key is a reserved word",
+    "lineNumber": 294
+  },
+  {
+    "__docId__": 126,
+    "kind": "testDescribe",
+    "name": "describe30",
+    "testId": 30,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe30",
+    "access": null,
+    "description": "#setObject()",
+    "lineNumber": 307,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#setObject}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#setObject"
+    ]
+  },
+  {
+    "__docId__": 127,
+    "kind": "testIt",
+    "name": "it31",
+    "testId": 31,
+    "memberof": "test/cookies_test.js~describe0.describe30",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe30.it31",
+    "access": null,
+    "description": "should properly serialize and set the cookies associated with the current document",
+    "lineNumber": 308
+  },
+  {
+    "__docId__": 128,
+    "kind": "testIt",
+    "name": "it32",
+    "testId": 32,
+    "memberof": "test/cookies_test.js~describe0.describe30",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe30.it32",
+    "access": null,
+    "description": "should throw an error if the specified key is a reserved word",
+    "lineNumber": 323
+  },
+  {
+    "__docId__": 129,
+    "kind": "testDescribe",
+    "name": "describe33",
+    "testId": 33,
+    "memberof": "test/cookies_test.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe33",
+    "access": null,
+    "description": "#toString()",
+    "lineNumber": 336,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{Cookies#toString}"
+      }
+    ],
+    "testTargets": [
+      "Cookies#toString"
+    ]
+  },
+  {
+    "__docId__": 130,
+    "kind": "testIt",
+    "name": "it34",
+    "testId": 34,
+    "memberof": "test/cookies_test.js~describe0.describe33",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe33.it34",
+    "access": null,
+    "description": "should return an empty string for a newly created instance",
+    "lineNumber": 337
+  },
+  {
+    "__docId__": 131,
+    "kind": "testIt",
+    "name": "it35",
+    "testId": 35,
+    "memberof": "test/cookies_test.js~describe0.describe33",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookies_test.js~describe0.describe33.it35",
+    "access": null,
+    "description": "should return a format like \"<key>=<value>; expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance",
+    "lineNumber": 341
+  },
+  {
+    "__docId__": 132,
+    "kind": "testFile",
+    "name": "test/cookie_options_test.js",
+    "content": "'use strict';\r\n\r\nimport {expect} from 'chai';\r\nimport {describe, it} from 'mocha';\r\nimport {CookieOptions} from '../src/index';\r\n\r\n/**\r\n * @test {CookieOptions}\r\n */\r\ndescribe('CookieOptions', () => {\r\n\r\n  /**\r\n   * @test {CookieOptions#toJSON}\r\n   */\r\n  describe('#toJSON()', () => {\r\n    it('should return a map with default values for a newly created instance', () => {\r\n      expect((new CookieOptions).toJSON()).to.be.an('object').that.deep.equal({\r\n        expires: null,\r\n        path: '',\r\n        domain: '',\r\n        secure: false\r\n      });\r\n    });\r\n\r\n    it('should return a non-empty map for an initialized instance', () => {\r\n      expect(new CookieOptions(0, '/path', 'domain.com', true).toJSON()).to.be.an('object').that.deep.equal({\r\n        expires: '1970-01-01T00:00:00.000Z',\r\n        path: '/path',\r\n        domain: 'domain.com',\r\n        secure: true\r\n      });\r\n    });\r\n  });\r\n\r\n  /**\r\n   * @test {CookieOptions#toString}\r\n   */\r\n  describe('#toString()', () => {\r\n    it('should return an empty string for a newly created instance', () => {\r\n      expect(String(new CookieOptions)).to.be.empty;\r\n    });\r\n\r\n    it('should return a format like \"expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance', () => {\r\n      expect(String(new CookieOptions(0, '/path', 'domain.com', true)))\r\n        .to.equal('expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=domain.com; path=/path; secure');\r\n    });\r\n  });\r\n});\r\n",
+    "static": true,
+    "longname": "test/cookie_options_test.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 133,
+    "kind": "testDescribe",
+    "name": "describe36",
+    "testId": 36,
+    "memberof": "test/cookie_options_test.js",
+    "testDepth": 0,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36",
+    "access": null,
+    "description": "CookieOptions",
+    "lineNumber": 10,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{CookieOptions}"
+      }
+    ],
+    "testTargets": [
+      "CookieOptions"
+    ]
+  },
+  {
+    "__docId__": 134,
+    "kind": "testDescribe",
+    "name": "describe37",
+    "testId": 37,
+    "memberof": "test/cookie_options_test.js~describe36",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe37",
+    "access": null,
+    "description": "#toJSON()",
+    "lineNumber": 15,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{CookieOptions#toJSON}"
+      }
+    ],
+    "testTargets": [
+      "CookieOptions#toJSON"
+    ]
+  },
+  {
+    "__docId__": 135,
+    "kind": "testIt",
+    "name": "it38",
+    "testId": 38,
+    "memberof": "test/cookie_options_test.js~describe36.describe37",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe37.it38",
+    "access": null,
+    "description": "should return a map with default values for a newly created instance",
+    "lineNumber": 16
+  },
+  {
+    "__docId__": 136,
+    "kind": "testIt",
+    "name": "it39",
+    "testId": 39,
+    "memberof": "test/cookie_options_test.js~describe36.describe37",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe37.it39",
+    "access": null,
+    "description": "should return a non-empty map for an initialized instance",
+    "lineNumber": 25
+  },
+  {
+    "__docId__": 137,
+    "kind": "testDescribe",
+    "name": "describe40",
+    "testId": 40,
+    "memberof": "test/cookie_options_test.js~describe36",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe40",
+    "access": null,
+    "description": "#toString()",
+    "lineNumber": 38,
+    "unknown": [
+      {
+        "tagName": "@test",
+        "tagValue": "{CookieOptions#toString}"
+      }
+    ],
+    "testTargets": [
+      "CookieOptions#toString"
+    ]
+  },
+  {
+    "__docId__": 138,
+    "kind": "testIt",
+    "name": "it41",
+    "testId": 41,
+    "memberof": "test/cookie_options_test.js~describe36.describe40",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe40.it41",
+    "access": null,
+    "description": "should return an empty string for a newly created instance",
+    "lineNumber": 39
+  },
+  {
+    "__docId__": 139,
+    "kind": "testIt",
+    "name": "it42",
+    "testId": 42,
+    "memberof": "test/cookie_options_test.js~describe36.describe40",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/cookie_options_test.js~describe36.describe40.it42",
+    "access": null,
+    "description": "should return a format like \"expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance",
+    "lineNumber": 43
+  }
+]
