@@ -42,11 +42,10 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/cookie_module.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {APP_BASE_HREF} from &apos;@angular/common&apos;;
-import {NgModule} from &apos;@angular/core&apos;;
+import {Injector, NgModule} from &apos;@angular/core&apos;;
 
-import {CookieOptions} from &apos;./cookie_options&apos;;
+import {CookieOptions, COOKIE_OPTIONS} from &apos;./cookie_options&apos;;
 import {Cookies} from &apos;./cookies&apos;;
-import {COOKIE_OPTIONS} from &apos;./di_tokens&apos;;
 
 /**
  * The cookie module.
@@ -60,7 +59,7 @@ export class CookieModule {
   static get annotations() {
     return [new NgModule({
       providers: [
-        {provide: COOKIE_OPTIONS, useFactory: APP_BASE_HREF =&gt; new CookieOptions(null, APP_BASE_HREF), deps: [APP_BASE_HREF]},
+        {provide: COOKIE_OPTIONS, useFactory: injector =&gt; new CookieOptions(null, injector.get(APP_BASE_HREF, &apos;/&apos;)), deps: [Injector]},
         Cookies
       ]
     })];

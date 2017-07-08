@@ -41,7 +41,7 @@
 </nav>
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="cookie-service-for-angular">Cookie service for Angular</h1>
-<p><img src="https://img.shields.io/badge/angular-%3E%3D4.2.5-brightgreen.svg" alt="Runtime"> <img src="https://img.shields.io/npm/v/@cedx/ngx-cookies.svg" alt="Release"> <img src="https://img.shields.io/npm/l/@cedx/ngx-cookies.svg" alt="License"> <img src="https://img.shields.io/npm/dt/@cedx/ngx-cookies.svg" alt="Downloads"> <img src="https://david-dm.org/cedx/ngx-cookies.svg" alt="Dependencies"> <img src="https://coveralls.io/repos/github/cedx/ngx-cookies/badge.svg" alt="Coverage"> <img src="https://travis-ci.org/cedx/ngx-cookies.svg" alt="Build"></p>
+<p><img src="https://img.shields.io/badge/angular-%3E%3D4.2.6-brightgreen.svg" alt="Runtime"> <img src="https://img.shields.io/npm/v/@cedx/ngx-cookies.svg" alt="Release"> <img src="https://img.shields.io/npm/l/@cedx/ngx-cookies.svg" alt="License"> <img src="https://img.shields.io/npm/dt/@cedx/ngx-cookies.svg" alt="Downloads"> <img src="https://david-dm.org/cedx/ngx-cookies.svg" alt="Dependencies"> <img src="https://coveralls.io/repos/github/cedx/ngx-cookies/badge.svg" alt="Coverage"> <img src="https://travis-ci.org/cedx/ngx-cookies.svg" alt="Build"></p>
 <p><a href="https://angular.io">Angular</a> service for interacting with the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies">HTTP Cookies</a>, implemented in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>.</p>
 <h2 id="installing-via-npm-https-www-npmjs-com-">Installing via <a href="https://www.npmjs.com">npm</a></h2>
 <p>From a command prompt, run:</p>
@@ -69,7 +69,7 @@ export class AppModule {
 }</code>
 </code></pre>
 <blockquote>
-<p>The <code>CookieModule</code> provider is intended for the application root module only.</p>
+<p>The <code>CookieModule</code> provider is intended for the application root module.</p>
 </blockquote>
 <p>Then, it will be available in the constructor of the component classes:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">import {Component} from &apos;@angular/core&apos;;
@@ -115,7 +115,7 @@ cookies.defaults.secure = true;
 console.log(cookies.defaults);
 // CookieOptions {&quot;domain&quot;: &quot;domain.com&quot;, &quot;expires&quot;: null, &quot;path&quot;: &quot;/www&quot;, &quot;secure&quot;: true}</code>
 </code></pre>
-<p>This property allows the configuration of default cookie options at runtime.</p>
+<p>This property allows the configuration of the default cookie options at runtime.</p>
 <h4 id="-keys-string-"><code>.keys: string[]</code></h4>
 <p>Returns the keys of the cookies associated with the current document:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.keys); // []
@@ -213,6 +213,7 @@ cookies.set(&apos;foo&apos;, &apos;bar&apos;, options);</code>
 </code></pre>
 <p>You can provide default values for the cookie options using the <code>COOKIE_OPTIONS</code> injection token.</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">import {APP_BASE_HREF} from &apos;@angular/common&apos;;
+import {Injector} from &apos;@angular/core&apos;;
 import {BrowserModule} from &apos;@angular/platform-browser&apos;;
 import {CookieModule, CookieOptions, COOKIE_OPTIONS} from &apos;@cedx/ngx-cookies&apos;;
 import {AppComponent} from &apos;./app_component&apos;;
@@ -227,16 +228,17 @@ export class AppModule {
       declarations: [AppComponent],
       imports: [BrowserModule, CookieModule],
       providers: [{
-        provide: COOKIE_OPTIONS, 
-        useFactory: APP_BASE_HREF =&gt; new CookieOptions(null, APP_BASE_HREF, &apos;www.domain.com&apos;, true), 
-        deps: [APP_BASE_HREF]
+        provide: COOKIE_OPTIONS,
+        deps: [Injector],
+        useFactory: injector =&gt;
+          new CookieOptions(null, injector.get(APP_BASE_HREF, &apos;/&apos;), &apos;www.domain.com&apos;, true)
       }]
     })];
   }
 }</code>
 </code></pre>
 <blockquote>
-<p>By default, the address that appears in your <code>&lt;base&gt;</code> tag will be used as the cookie path. This is important so that cookies will be visible for all routes when <code>PathLocationStrategy</code> is used to configure the <code>Location</code> service.</p>
+<p>By default, the address that appears in your <code>&lt;base&gt;</code> tag will be used as the cookie path. This is important so that cookies will be visible for all routes when <a href="https://angular.io/api/common/PathLocationStrategy"><code>PathLocationStrategy</code></a> is used to configure the <a href="https://angular.io/api/common/Location"><code>Location</code></a> service.</p>
 </blockquote>
 <h3 id="iteration">Iteration</h3>
 <p>The <code>Cookies</code> class is iterable: you can go through all key/value pairs contained using a <code>for...of</code> loop. Each entry is an array with two elements (e.g. the key and the value):</p>
@@ -256,7 +258,7 @@ for (let entry of cookies) {
   changes =&gt; console.log(changes)
 );</code>
 </code></pre>
-<p>The changes are expressed as an array of <a href="https://angular.io/docs/js/latest/api/core/index/KeyValueChangeRecord-interface.html"><code>KeyValueChangeRecord</code></a> instances, where a <code>null</code> reference indicates an absence of value:</p>
+<p>The changes are expressed as an array of <a href="https://angular.io/api/core/KeyValueChangeRecord"><code>KeyValueChangeRecord</code></a> instances, where a <code>null</code> reference indicates an absence of value:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.onChanges.subscribe(changes =&gt; console.log(changes[0]));
 
 cookies.set(&apos;foo&apos;, &apos;bar&apos;);
@@ -268,7 +270,7 @@ cookies.set(&apos;foo&apos;, &apos;baz&apos;);
 cookies.remove(&apos;foo&apos;);
 // Prints: {key: &quot;foo&quot;, currentValue: null, previousValue: &quot;baz&quot;}</code>
 </code></pre>
-<p>The values contained in the <code>currentValue</code> and <code>previousValue</code> properties of the <code>KeyValueChangeRecord</code> instances are the raw storage values. If you use the <code>Cookies#setObject</code> method to change a key, you will get the serialized string value, not the original value passed to the method:</p>
+<p>The values contained in the <code>currentValue</code> and <code>previousValue</code> properties of the <code>KeyValueChangeRecord</code> instances are the raw cookie values. If you use the <code>Cookies#setObject</code> method to set a cookie, you will get the serialized string value, not the original value passed to the method:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.setObject(&apos;foo&apos;, {bar: &apos;baz&apos;});
 // Prints: {key: &quot;foo&quot;, currentValue: &quot;{\&quot;bar\&quot;: \&quot;baz\&quot;}&quot;, previousValue: null}</code>
 </code></pre>

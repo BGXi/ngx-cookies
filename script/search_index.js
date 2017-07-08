@@ -1,8 +1,8 @@
 window.esdocSearchIndex = [
   [
-    "@cedx/ngx-cookies/src/di_tokens.js~cookie_options",
+    "@cedx/ngx-cookies/src/cookie_options.js~cookie_options",
     "variable/index.html#static-variable-COOKIE_OPTIONS",
-    "<span>COOKIE_OPTIONS</span> <span class=\"search-result-import-path\">@cedx/ngx-cookies/src/di_tokens.js</span>",
+    "<span>COOKIE_OPTIONS</span> <span class=\"search-result-import-path\">@cedx/ngx-cookies/src/cookie_options.js</span>",
     "variable"
   ],
   [
@@ -772,12 +772,6 @@ window.esdocSearchIndex = [
     "class/src/cookies.js~Cookies.html#static-get-parameters",
     "src/cookies.js~Cookies.parameters",
     "member"
-  ],
-  [
-    "src/di_tokens.js",
-    "file/src/di_tokens.js.html",
-    "src/di_tokens.js",
-    "file"
   ],
   [
     "src/index.js",

@@ -42,11 +42,9 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/cookies.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Injectable} from &apos;@angular/core&apos;;
-import {DOCUMENT} from &apos;@angular/platform-browser&apos;;
+import {DOCUMENT} from &apos;@angular/common&apos;;
 import {Subject} from &apos;rxjs/Subject&apos;;
-
-import {CookieOptions} from &apos;./cookie_options&apos;;
-import {COOKIE_OPTIONS} from &apos;./di_tokens&apos;;
+import {CookieOptions, COOKIE_OPTIONS} from &apos;./cookie_options&apos;;
 
 /**
  * Provides access to the HTTP cookies.

@@ -3,19 +3,14 @@
   "expectCount": 28,
   "actualCount": 28,
   "files": {
-    "src/di_tokens.js": {
-      "expectCount": 1,
-      "actualCount": 1,
+    "src/cookie_options.js": {
+      "expectCount": 9,
+      "actualCount": 9,
       "undocumentLines": []
     },
     "src/cookie_module.js": {
       "expectCount": 2,
       "actualCount": 2,
-      "undocumentLines": []
-    },
-    "src/cookie_options.js": {
-      "expectCount": 8,
-      "actualCount": 8,
       "undocumentLines": []
     },
     "src/cookies.js": {
