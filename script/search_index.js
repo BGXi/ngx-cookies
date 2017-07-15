@@ -672,6 +672,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/cookie_options.js~cookieoptions.provider",
+    "class/src/cookie_options.js~CookieOptions.html#static-get-provider",
+    "src/cookie_options.js~CookieOptions.provider",
+    "member"
+  ],
+  [
     "src/cookies.js",
     "file/src/cookies.js.html",
     "src/cookies.js",
