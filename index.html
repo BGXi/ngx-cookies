@@ -3,23 +3,20 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl">
-  <title data-ice="title">Cookie service for Angular API Document</title>
+  <title data-ice="title">Home | Cookie service for Angular</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
-  
-  
   <script src="script/manual.js"></script>
-</head>
+<meta name="description" content="Angular service for interacting with the HTTP Cookies, implemented in JavaScript."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="Cookie service for Angular"><meta property="twitter:description" content="Angular service for interacting with the HTTP Cookies, implemented in JavaScript."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
-  <a href="./">Home</a>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.png" style="width:34px;"></a>
   <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   <a href="test.html" data-ice="testLink">Test</a>
-  <a data-ice="repoURL" href="https://github.com/cedx/ngx-cookies" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -27,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/cedx/ngx-cookies"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -40,15 +37,12 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="cookie-service-for-angular">Cookie service for Angular</h1>
-<p><img src="https://img.shields.io/badge/angular-%3E%3D4.3.0-brightgreen.svg" alt="Runtime"> <img src="https://img.shields.io/npm/v/@cedx/ngx-cookies.svg" alt="Release"> <img src="https://img.shields.io/npm/l/@cedx/ngx-cookies.svg" alt="License"> <img src="https://img.shields.io/npm/dt/@cedx/ngx-cookies.svg" alt="Downloads"> <img src="https://david-dm.org/cedx/ngx-cookies.svg" alt="Dependencies"> <img src="https://coveralls.io/repos/github/cedx/ngx-cookies/badge.svg" alt="Coverage"> <img src="https://travis-ci.org/cedx/ngx-cookies.svg" alt="Build"></p>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="cookie-service-for-angular">Cookie service for Angular</h1><p><img src="https://img.shields.io/badge/angular-%3E%3D4.3.2-brightgreen.svg" alt="Runtime"> <img src="https://img.shields.io/npm/v/@cedx/ngx-cookies.svg" alt="Release"> <img src="https://img.shields.io/npm/l/@cedx/ngx-cookies.svg" alt="License"> <img src="https://img.shields.io/npm/dt/@cedx/ngx-cookies.svg" alt="Downloads"> <img src="https://david-dm.org/cedx/ngx-cookies.svg" alt="Dependencies"> <img src="https://coveralls.io/repos/github/cedx/ngx-cookies/badge.svg" alt="Coverage"> <img src="https://travis-ci.org/cedx/ngx-cookies.svg" alt="Build"></p>
 <p><a href="https://angular.io">Angular</a> service for interacting with the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies">HTTP Cookies</a>, implemented in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>.</p>
-<h2 id="installing-via-npm-https-www-npmjs-com-">Installing via <a href="https://www.npmjs.com">npm</a></h2>
-<p>From a command prompt, run:</p>
+<h2 id="installing-via--a-href--https---www-npmjs-com--npm--a-">Installing via <a href="https://www.npmjs.com">npm</a></h2><p>From a command prompt, run:</p>
 <pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install --save @cedx/ngx-cookies</code>
 </code></pre>
-<h2 id="usage">Usage</h2>
-<p>This package provides a service dedicated to the cookie management: the <code>Cookies</code> class.
+<h2 id="usage">Usage</h2><p>This package provides a service dedicated to the cookie management: the <code>Cookies</code> class.
 It needs to be registered with the dependency injector by importing its module, the <code>CookieModule</code> class:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">import {NgModule} from &apos;@angular/core&apos;;
 import {BrowserModule} from &apos;@angular/platform-browser&apos;;
@@ -101,10 +95,8 @@ export class AppComponent {
   }
 }</code>
 </code></pre>
-<h3 id="programming-interface">Programming interface</h3>
-<p>The <code>Cookies</code> class has the following API:</p>
-<h4 id="-defaults-cookieoptions-"><code>.defaults: CookieOptions</code></h4>
-<p>Returns the default options to pass when setting cookies:</p>
+<h3 id="programming-interface">Programming interface</h3><p>The <code>Cookies</code> class has the following API:</p>
+<h4 id="-code--defaults--cookieoptions--code-"><code>.defaults: CookieOptions</code></h4><p>Returns the default options to pass when setting cookies:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.defaults);
 // CookieOptions {&quot;domain&quot;: &quot;&quot;, &quot;expires&quot;: null, &quot;path&quot;: &quot;/&quot;, &quot;secure&quot;: false}
 
@@ -116,30 +108,26 @@ console.log(cookies.defaults);
 // CookieOptions {&quot;domain&quot;: &quot;domain.com&quot;, &quot;expires&quot;: null, &quot;path&quot;: &quot;/www&quot;, &quot;secure&quot;: true}</code>
 </code></pre>
 <p>This property allows the configuration of the default cookie options at runtime.</p>
-<h4 id="-keys-string-"><code>.keys: string[]</code></h4>
-<p>Returns the keys of the cookies associated with the current document:</p>
+<h4 id="-code--keys--string----code-"><code>.keys: string[]</code></h4><p>Returns the keys of the cookies associated with the current document:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.keys); // []
 
 cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.keys); // [&quot;foo&quot;]</code>
 </code></pre>
-<h4 id="-length-number-"><code>.length: number</code></h4>
-<p>Returns the number of cookies associated with the current document:</p>
+<h4 id="-code--length--number--code-"><code>.length: number</code></h4><p>Returns the number of cookies associated with the current document:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.length); // 0
 
 cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.length); // 1</code>
 </code></pre>
-<h4 id="-clear-"><code>.clear()</code></h4>
-<p>Removes all cookies associated with the current document:</p>
+<h4 id="-code--clear----code-"><code>.clear()</code></h4><p>Removes all cookies associated with the current document:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.length); // 1
 
 cookies.clear();
 console.log(cookies.length); // 0</code>
 </code></pre>
-<h4 id="-get-key-string-defaultvalue-any-null-string-"><code>.get(key: string, defaultValue: any = null): string</code></h4>
-<p>Returns the value associated to the specified key:</p>
+<h4 id="-code--get-key--string--defaultvalue--any---null---string--code-"><code>.get(key: string, defaultValue: any = null): string</code></h4><p>Returns the value associated to the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.get(&apos;foo&apos;)); // &quot;bar&quot;</code>
 </code></pre>
@@ -147,8 +135,7 @@ console.log(cookies.get(&apos;foo&apos;)); // &quot;bar&quot;</code>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.get(&apos;unknownKey&apos;)); // null
 console.log(cookies.get(&apos;unknownKey&apos;, &apos;foo&apos;)); // &quot;foo&quot;</code>
 </code></pre>
-<h4 id="-getobject-key-string-defaultvalue-any-null-any-"><code>.getObject(key: string, defaultValue: any = null): any</code></h4>
-<p>Deserializes and returns the value associated to the specified key:</p>
+<h4 id="-code--getobject-key--string--defaultvalue--any---null---any--code-"><code>.getObject(key: string, defaultValue: any = null): any</code></h4><p>Deserializes and returns the value associated to the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.setObject(&apos;foo&apos;, {bar: &apos;baz&apos;});
 console.log(cookies.getObject(&apos;foo&apos;)); // {bar: &quot;baz&quot;}</code>
 </code></pre>
@@ -159,23 +146,20 @@ console.log(cookies.getObject(&apos;foo&apos;)); // {bar: &quot;baz&quot;}</code
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.getObject(&apos;unknownKey&apos;)); // null
 console.log(cookies.getObject(&apos;unknownKey&apos;, false)); // false</code>
 </code></pre>
-<h4 id="-has-key-string-boolean-"><code>.has(key: string): boolean</code></h4>
-<p>Returns a boolean value indicating whether the current document has a cookie with the specified key:</p>
+<h4 id="-code--has-key--string---boolean--code-"><code>.has(key: string): boolean</code></h4><p>Returns a boolean value indicating whether the current document has a cookie with the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.has(&apos;foo&apos;)); // false
 
 cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.has(&apos;foo&apos;)); // true</code>
 </code></pre>
-<h4 id="-remove-key-string-options-cookieoptions-this-defaults-"><code>.remove(key: string, options: CookieOptions = this.defaults)</code></h4>
-<p>Removes the value associated to the specified key:</p>
+<h4 id="-code--remove-key--string--options--cookieoptions---this-defaults---code-"><code>.remove(key: string, options: CookieOptions = this.defaults)</code></h4><p>Removes the value associated to the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 console.log(cookies.has(&apos;foo&apos;)); // true
 
 cookies.remove(&apos;foo&apos;);
 console.log(cookies.has(&apos;foo&apos;)); // false</code>
 </code></pre>
-<h4 id="-set-key-string-value-string-options-cookieoptions-date-this-defaults-"><code>.set(key: string, value: string, options: CookieOptions|Date = this.defaults)</code></h4>
-<p>Associates a given value to the specified key:</p>
+<h4 id="-code--set-key--string--value--string--options--cookieoptions-date---this-defaults---code-"><code>.set(key: string, value: string, options: CookieOptions|Date = this.defaults)</code></h4><p>Associates a given value to the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.get(&apos;foo&apos;)); // null
 
 cookies.set(&apos;foo&apos;, &apos;bar&apos;);
@@ -184,8 +168,7 @@ console.log(cookies.get(&apos;foo&apos;)); // &quot;bar&quot;</code>
 <p>An expiration date and time can be provided for setting the cookie duration:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.set(&apos;foo&apos;, &apos;bar&apos;, new Date(Date.now() + 3600 * 1000));</code>
 </code></pre>
-<h4 id="-setobject-key-string-value-any-options-cookieoptions-date-this-defaults-"><code>.setObject(key: string, value: any, options: CookieOptions|Date = this.defaults)</code></h4>
-<p>Serializes and associates a given value to the specified key:</p>
+<h4 id="-code--setobject-key--string--value--any--options--cookieoptions-date---this-defaults---code-"><code>.setObject(key: string, value: any, options: CookieOptions|Date = this.defaults)</code></h4><p>Serializes and associates a given value to the specified key:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">console.log(cookies.getObject(&apos;foo&apos;)); // null
 
 cookies.setObject(&apos;foo&apos;, {bar: &apos;baz&apos;});
@@ -197,8 +180,7 @@ console.log(cookies.getObject(&apos;foo&apos;)); // {bar: &quot;baz&quot;}</code
 <p>An expiration date and time can be provided for setting the cookie duration:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.setObject(&apos;foo&apos;, {bar: &apos;baz&apos;}, new Date(Date.now() + 3600 * 1000));</code>
 </code></pre>
-<h3 id="options">Options</h3>
-<p>Several methods accept an <code>options</code> parameter in order to customize the cookie attributes.
+<h3 id="options">Options</h3><p>Several methods accept an <code>options</code> parameter in order to customize the cookie attributes.
 These options are expressed using an instance of the <code>CookieOptions</code> class, which has the following properties:</p>
 <ul>
 <li><code>expires: Date = null</code>: The expiration date and time for the cookie.</li>
@@ -240,8 +222,7 @@ export class AppModule {
 <blockquote>
 <p>By default, the address that appears in your <code>&lt;base&gt;</code> tag will be used as the cookie path. This is important so that cookies will be visible for all routes when <a href="https://angular.io/api/common/PathLocationStrategy"><code>PathLocationStrategy</code></a> is used to configure the <a href="https://angular.io/api/common/Location"><code>Location</code></a> service.</p>
 </blockquote>
-<h3 id="iteration">Iteration</h3>
-<p>The <code>Cookies</code> class is iterable: you can go through all key/value pairs contained using a <code>for...of</code> loop. Each entry is an array with two elements (e.g. the key and the value):</p>
+<h3 id="iteration">Iteration</h3><p>The <code>Cookies</code> class is iterable: you can go through all key/value pairs contained using a <code>for...of</code> loop. Each entry is an array with two elements (e.g. the key and the value):</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.set(&apos;foo&apos;, &apos;bar&apos;);
 cookies.set(&apos;anotherKey&apos;, &apos;anotherValue&apos;);
 
@@ -251,8 +232,7 @@ for (let entry of cookies) {
   // Round 2: [&quot;anotherKey&quot;, &quot;anotherValue&quot;] 
 }</code>
 </code></pre>
-<h3 id="events">Events</h3>
-<p>Every time one or several values are changed (added, removed or updated) through the <code>Cookies</code> class, a <code>changes</code> event is triggered.</p>
+<h3 id="events">Events</h3><p>Every time one or several values are changed (added, removed or updated) through the <code>Cookies</code> class, a <code>changes</code> event is triggered.</p>
 <p>This event is exposed as an <a href="http://reactivex.io/intro.html">Observable</a>, you can subscribe to it using the <code>onChanges</code> property:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.onChanges.subscribe(
   changes =&gt; console.log(changes)
@@ -274,19 +254,17 @@ cookies.remove(&apos;foo&apos;);
 <pre><code class="lang-javascript"><code class="source-code prettyprint">cookies.setObject(&apos;foo&apos;, {bar: &apos;baz&apos;});
 // Prints: {key: &quot;foo&quot;, currentValue: &quot;{\&quot;bar\&quot;: \&quot;baz\&quot;}&quot;, previousValue: null}</code>
 </code></pre>
-<h2 id="see-also">See also</h2>
-<ul>
+<h2 id="see-also">See also</h2><ul>
 <li><a href="https://cedx.github.io/ngx-cookies">API reference</a></li>
 <li><a href="https://coveralls.io/github/cedx/ngx-cookies">Code coverage</a></li>
 <li><a href="https://travis-ci.org/cedx/ngx-cookies">Continuous integration</a></li>
 </ul>
-<h2 id="license">License</h2>
-<p><a href="https://github.com/cedx/ngx-cookies">Cookie service for Angular</a> is distributed under the Apache License, version 2.0.</p>
+<h2 id="license">License</h2><p><a href="https://github.com/cedx/ngx-cookies">Cookie service for Angular</a> is distributed under the Apache License, version 2.0.</p>
 </div>
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.1)</span><img src="./image/esdoc-logo-mini-black.png"></a>
 </footer>
 
 <script src="script/search_index.js"></script>

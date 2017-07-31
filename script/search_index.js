@@ -24,592 +24,544 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "builtinexternal/ecmascriptexternal.js~array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~arraybuffer",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
-    "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~boolean",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "BuiltinExternal/ECMAScriptExternal.js~Boolean",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~dataview",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
-    "BuiltinExternal/ECMAScriptExternal.js~DataView",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~date",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
-    "BuiltinExternal/ECMAScriptExternal.js~Date",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~error",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
-    "BuiltinExternal/ECMAScriptExternal.js~Error",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~evalerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
-    "BuiltinExternal/ECMAScriptExternal.js~EvalError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~float32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~float64array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~function",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "BuiltinExternal/ECMAScriptExternal.js~Function",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~generator",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
-    "BuiltinExternal/ECMAScriptExternal.js~Generator",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~generatorfunction",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
-    "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~infinity",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
-    "BuiltinExternal/ECMAScriptExternal.js~Infinity",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~int16array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~int32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~int8array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~internalerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
-    "BuiltinExternal/ECMAScriptExternal.js~InternalError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~json",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
-    "BuiltinExternal/ECMAScriptExternal.js~JSON",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~map",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
-    "BuiltinExternal/ECMAScriptExternal.js~Map",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~nan",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
-    "BuiltinExternal/ECMAScriptExternal.js~NaN",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~number",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "BuiltinExternal/ECMAScriptExternal.js~Number",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~object",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "BuiltinExternal/ECMAScriptExternal.js~Object",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~promise",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
-    "BuiltinExternal/ECMAScriptExternal.js~Promise",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~proxy",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
-    "BuiltinExternal/ECMAScriptExternal.js~Proxy",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~rangeerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
-    "BuiltinExternal/ECMAScriptExternal.js~RangeError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~referenceerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
-    "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~reflect",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
-    "BuiltinExternal/ECMAScriptExternal.js~Reflect",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~regexp",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
-    "BuiltinExternal/ECMAScriptExternal.js~RegExp",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~set",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
-    "BuiltinExternal/ECMAScriptExternal.js~Set",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~string",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "BuiltinExternal/ECMAScriptExternal.js~String",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~symbol",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
-    "BuiltinExternal/ECMAScriptExternal.js~Symbol",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~syntaxerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
-    "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~typeerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
-    "BuiltinExternal/ECMAScriptExternal.js~TypeError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~urierror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
-    "BuiltinExternal/ECMAScriptExternal.js~URIError",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~uint16array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~uint32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~uint8array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
-    "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~uint8clampedarray",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
-    "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~weakmap",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
-    "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~weakset",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
-    "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~boolean",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "BuiltinExternal/ECMAScriptExternal.js~boolean",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~function",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "BuiltinExternal/ECMAScriptExternal.js~function",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~null",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
-    "BuiltinExternal/ECMAScriptExternal.js~null",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~number",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "BuiltinExternal/ECMAScriptExternal.js~number",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~object",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "BuiltinExternal/ECMAScriptExternal.js~object",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~string",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "BuiltinExternal/ECMAScriptExternal.js~string",
-    "external"
-  ],
-  [
-    "builtinexternal/ecmascriptexternal.js~undefined",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
-    "BuiltinExternal/ECMAScriptExternal.js~undefined",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~audiocontext",
-    "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
-    "BuiltinExternal/WebAPIExternal.js~AudioContext",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~canvasrenderingcontext2d",
-    "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
-    "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~documentfragment",
-    "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
-    "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~element",
-    "https://developer.mozilla.org/en-US/docs/Web/API/Element",
-    "BuiltinExternal/WebAPIExternal.js~Element",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~event",
-    "https://developer.mozilla.org/en-US/docs/Web/API/Event",
-    "BuiltinExternal/WebAPIExternal.js~Event",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~node",
-    "https://developer.mozilla.org/en-US/docs/Web/API/Node",
-    "BuiltinExternal/WebAPIExternal.js~Node",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~nodelist",
-    "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
-    "BuiltinExternal/WebAPIExternal.js~NodeList",
-    "external"
-  ],
-  [
-    "builtinexternal/webapiexternal.js~xmlhttprequest",
-    "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
-    "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
-    "external"
-  ],
-  [
     "cookieoptions src/cookie_options.js~cookieoptions,cookieoptions",
-    "test-file/test/cookie_options_test.js.html#lineNumber10",
+    "test-file/test/cookie_options_test.js.html#lineNumber9",
     "CookieOptions",
     "test"
   ],
   [
     "cookieoptions#tojson src/cookie_options.js~cookieoptions#tojson,cookieoptions#tojson",
-    "test-file/test/cookie_options_test.js.html#lineNumber15",
+    "test-file/test/cookie_options_test.js.html#lineNumber14",
     "CookieOptions #toJSON()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookie_options_test.js.html#lineNumber16",
+    "test-file/test/cookie_options_test.js.html#lineNumber15",
     "CookieOptions #toJSON() should return a map with default values for a newly created instance",
     "test"
   ],
   [
     "",
-    "test-file/test/cookie_options_test.js.html#lineNumber25",
+    "test-file/test/cookie_options_test.js.html#lineNumber24",
     "CookieOptions #toJSON() should return a non-empty map for an initialized instance",
     "test"
   ],
   [
     "cookieoptions#tostring src/cookie_options.js~cookieoptions#tostring,cookieoptions#tostring",
-    "test-file/test/cookie_options_test.js.html#lineNumber38",
+    "test-file/test/cookie_options_test.js.html#lineNumber37",
     "CookieOptions #toString()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookie_options_test.js.html#lineNumber43",
+    "test-file/test/cookie_options_test.js.html#lineNumber42",
     "CookieOptions #toString() should return a format like \"expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance",
     "test"
   ],
   [
     "",
-    "test-file/test/cookie_options_test.js.html#lineNumber39",
+    "test-file/test/cookie_options_test.js.html#lineNumber38",
     "CookieOptions #toString() should return an empty string for a newly created instance",
     "test"
   ],
   [
     "cookies src/cookies.js~cookies,cookies",
-    "test-file/test/cookies_test.js.html#lineNumber11",
+    "test-file/test/cookies_test.js.html#lineNumber10",
     "Cookies",
     "test"
   ],
   [
     "cookies#symbol.iterator cookies#symbol.iterator,cookies#symbol.iterator",
-    "test-file/test/cookies_test.js.html#lineNumber146",
+    "test-file/test/cookies_test.js.html#lineNumber145",
     "Cookies #[Symbol.iterator]()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber147",
+    "test-file/test/cookies_test.js.html#lineNumber146",
     "Cookies #[Symbol.iterator]() should return a done iterator if the current document has no associated cookie",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber153",
+    "test-file/test/cookies_test.js.html#lineNumber152",
     "Cookies #[Symbol.iterator]() should return a value iterator if the current document has associated cookies",
     "test"
   ],
   [
     "cookies#clear src/cookies.js~cookies#clear,cookies#clear",
-    "test-file/test/cookies_test.js.html#lineNumber178",
+    "test-file/test/cookies_test.js.html#lineNumber177",
     "Cookies #clear()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber179",
+    "test-file/test/cookies_test.js.html#lineNumber178",
     "Cookies #clear() should remove all the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#get src/cookies.js~cookies#get,cookies#get",
-    "test-file/test/cookies_test.js.html#lineNumber194",
+    "test-file/test/cookies_test.js.html#lineNumber193",
     "Cookies #get()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber195",
+    "test-file/test/cookies_test.js.html#lineNumber194",
     "Cookies #get() should properly get the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#getobject src/cookies.js~cookies#getobject,cookies#getobject",
-    "test-file/test/cookies_test.js.html#lineNumber213",
+    "test-file/test/cookies_test.js.html#lineNumber212",
     "Cookies #getObject()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber214",
+    "test-file/test/cookies_test.js.html#lineNumber213",
     "Cookies #getObject() should properly get the deserialized cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber232",
+    "test-file/test/cookies_test.js.html#lineNumber231",
     "Cookies #getObject() should return the default value if the value can't be deserialized",
     "test"
   ],
   [
     "cookies#has src/cookies.js~cookies#has,cookies#has",
-    "test-file/test/cookies_test.js.html#lineNumber244",
+    "test-file/test/cookies_test.js.html#lineNumber243",
     "Cookies #has()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber245",
+    "test-file/test/cookies_test.js.html#lineNumber244",
     "Cookies #has() should return `false` if the current document has an associated cookie with the specified key",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber249",
+    "test-file/test/cookies_test.js.html#lineNumber248",
     "Cookies #has() should return `true` if the current document does not have an associated cookie with the specified key",
     "test"
   ],
   [
     "cookies#keys src/cookies.js~cookies#keys,cookies#keys",
-    "test-file/test/cookies_test.js.html#lineNumber16",
+    "test-file/test/cookies_test.js.html#lineNumber15",
     "Cookies #keys",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber17",
+    "test-file/test/cookies_test.js.html#lineNumber16",
     "Cookies #keys should return an empty array if the current document has no associated cookie",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber21",
+    "test-file/test/cookies_test.js.html#lineNumber20",
     "Cookies #keys should return the keys of the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#length src/cookies.js~cookies#length,cookies#length",
-    "test-file/test/cookies_test.js.html#lineNumber36",
+    "test-file/test/cookies_test.js.html#lineNumber35",
     "Cookies #length",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber41",
+    "test-file/test/cookies_test.js.html#lineNumber40",
     "Cookies #length should return the number of cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber37",
+    "test-file/test/cookies_test.js.html#lineNumber36",
     "Cookies #length should return zero if the current document has no associated cookie",
     "test"
   ],
   [
     "cookies#onchanges src/cookies.js~cookies#onchanges,cookies#onchanges",
-    "test-file/test/cookies_test.js.html#lineNumber52",
+    "test-file/test/cookies_test.js.html#lineNumber51",
     "Cookies #onChanges",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber58",
+    "test-file/test/cookies_test.js.html#lineNumber57",
     "Cookies #onChanges should trigger an event when a cookie is added",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber95",
+    "test-file/test/cookies_test.js.html#lineNumber94",
     "Cookies #onChanges should trigger an event when a cookie is removed",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber75",
+    "test-file/test/cookies_test.js.html#lineNumber74",
     "Cookies #onChanges should trigger an event when a cookie is updated",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber115",
+    "test-file/test/cookies_test.js.html#lineNumber114",
     "Cookies #onChanges should trigger an event when all the cookies are removed",
     "test"
   ],
   [
     "cookies#remove src/cookies.js~cookies#remove,cookies#remove",
-    "test-file/test/cookies_test.js.html#lineNumber262",
+    "test-file/test/cookies_test.js.html#lineNumber261",
     "Cookies #remove()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber263",
+    "test-file/test/cookies_test.js.html#lineNumber262",
     "Cookies #remove() should properly remove the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#set src/cookies.js~cookies#set,cookies#set",
-    "test-file/test/cookies_test.js.html#lineNumber281",
+    "test-file/test/cookies_test.js.html#lineNumber280",
     "Cookies #set()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber282",
+    "test-file/test/cookies_test.js.html#lineNumber281",
     "Cookies #set() should properly set the cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber294",
+    "test-file/test/cookies_test.js.html#lineNumber293",
     "Cookies #set() should throw an error if the specified key is a reserved word",
     "test"
   ],
   [
     "cookies#setobject src/cookies.js~cookies#setobject,cookies#setobject",
-    "test-file/test/cookies_test.js.html#lineNumber307",
+    "test-file/test/cookies_test.js.html#lineNumber306",
     "Cookies #setObject()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber308",
+    "test-file/test/cookies_test.js.html#lineNumber307",
     "Cookies #setObject() should properly serialize and set the cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber323",
+    "test-file/test/cookies_test.js.html#lineNumber322",
     "Cookies #setObject() should throw an error if the specified key is a reserved word",
     "test"
   ],
   [
     "cookies#tostring src/cookies.js~cookies#tostring,cookies#tostring",
-    "test-file/test/cookies_test.js.html#lineNumber336",
+    "test-file/test/cookies_test.js.html#lineNumber335",
     "Cookies #toString()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber341",
+    "test-file/test/cookies_test.js.html#lineNumber340",
     "Cookies #toString() should return a format like \"<key>=<value>; expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber337",
+    "test-file/test/cookies_test.js.html#lineNumber336",
     "Cookies #toString() should return an empty string for a newly created instance",
     "test"
+  ],
+  [
+    "src/.external-ecmascript.js~array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "src/.external-ecmascript.js~Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~arraybuffer",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "src/.external-ecmascript.js~ArrayBuffer",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~boolean",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "src/.external-ecmascript.js~Boolean",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~dataview",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "src/.external-ecmascript.js~DataView",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~date",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "src/.external-ecmascript.js~Date",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~error",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "src/.external-ecmascript.js~Error",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~evalerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "src/.external-ecmascript.js~EvalError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~float32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "src/.external-ecmascript.js~Float32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~float64array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "src/.external-ecmascript.js~Float64Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~function",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "src/.external-ecmascript.js~Function",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~generator",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "src/.external-ecmascript.js~Generator",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~generatorfunction",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "src/.external-ecmascript.js~GeneratorFunction",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~infinity",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "src/.external-ecmascript.js~Infinity",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int16array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "src/.external-ecmascript.js~Int16Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "src/.external-ecmascript.js~Int32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int8array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "src/.external-ecmascript.js~Int8Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~internalerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "src/.external-ecmascript.js~InternalError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~json",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "src/.external-ecmascript.js~JSON",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~map",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "src/.external-ecmascript.js~Map",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~nan",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "src/.external-ecmascript.js~NaN",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~number",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "src/.external-ecmascript.js~Number",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~object",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "src/.external-ecmascript.js~Object",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~promise",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "src/.external-ecmascript.js~Promise",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~proxy",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "src/.external-ecmascript.js~Proxy",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~rangeerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "src/.external-ecmascript.js~RangeError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~referenceerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "src/.external-ecmascript.js~ReferenceError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~reflect",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "src/.external-ecmascript.js~Reflect",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~regexp",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "src/.external-ecmascript.js~RegExp",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~set",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "src/.external-ecmascript.js~Set",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~string",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "src/.external-ecmascript.js~String",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~symbol",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "src/.external-ecmascript.js~Symbol",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~syntaxerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "src/.external-ecmascript.js~SyntaxError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~typeerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "src/.external-ecmascript.js~TypeError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~urierror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "src/.external-ecmascript.js~URIError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint16array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "src/.external-ecmascript.js~Uint16Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "src/.external-ecmascript.js~Uint32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint8array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "src/.external-ecmascript.js~Uint8Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint8clampedarray",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "src/.external-ecmascript.js~Uint8ClampedArray",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~weakmap",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "src/.external-ecmascript.js~WeakMap",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~weakset",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "src/.external-ecmascript.js~WeakSet",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~boolean",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "src/.external-ecmascript.js~boolean",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~function",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "src/.external-ecmascript.js~function",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~null",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "src/.external-ecmascript.js~null",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~number",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "src/.external-ecmascript.js~number",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~object",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "src/.external-ecmascript.js~object",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~string",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "src/.external-ecmascript.js~string",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~undefined",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "src/.external-ecmascript.js~undefined",
+    "external"
   ],
   [
     "src/cookie_module.js",
