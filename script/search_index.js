@@ -73,79 +73,79 @@ window.esdocSearchIndex = [
   ],
   [
     "cookies#symbol.iterator cookies#symbol.iterator,cookies#symbol.iterator",
-    "test-file/test/cookies_test.js.html#lineNumber145",
+    "test-file/test/cookies_test.js.html#lineNumber149",
     "Cookies #[Symbol.iterator]()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber146",
+    "test-file/test/cookies_test.js.html#lineNumber150",
     "Cookies #[Symbol.iterator]() should return a done iterator if the current document has no associated cookie",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber152",
+    "test-file/test/cookies_test.js.html#lineNumber156",
     "Cookies #[Symbol.iterator]() should return a value iterator if the current document has associated cookies",
     "test"
   ],
   [
     "cookies#clear src/cookies.js~cookies#clear,cookies#clear",
-    "test-file/test/cookies_test.js.html#lineNumber177",
+    "test-file/test/cookies_test.js.html#lineNumber181",
     "Cookies #clear()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber178",
+    "test-file/test/cookies_test.js.html#lineNumber182",
     "Cookies #clear() should remove all the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#get src/cookies.js~cookies#get,cookies#get",
-    "test-file/test/cookies_test.js.html#lineNumber193",
+    "test-file/test/cookies_test.js.html#lineNumber197",
     "Cookies #get()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber194",
+    "test-file/test/cookies_test.js.html#lineNumber198",
     "Cookies #get() should properly get the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#getobject src/cookies.js~cookies#getobject,cookies#getobject",
-    "test-file/test/cookies_test.js.html#lineNumber212",
+    "test-file/test/cookies_test.js.html#lineNumber216",
     "Cookies #getObject()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber213",
+    "test-file/test/cookies_test.js.html#lineNumber217",
     "Cookies #getObject() should properly get the deserialized cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber231",
+    "test-file/test/cookies_test.js.html#lineNumber235",
     "Cookies #getObject() should return the default value if the value can't be deserialized",
     "test"
   ],
   [
     "cookies#has src/cookies.js~cookies#has,cookies#has",
-    "test-file/test/cookies_test.js.html#lineNumber243",
+    "test-file/test/cookies_test.js.html#lineNumber247",
     "Cookies #has()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber244",
+    "test-file/test/cookies_test.js.html#lineNumber248",
     "Cookies #has() should return `false` if the current document has an associated cookie with the specified key",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber248",
+    "test-file/test/cookies_test.js.html#lineNumber253",
     "Cookies #has() should return `true` if the current document does not have an associated cookie with the specified key",
     "test"
   ],
@@ -163,121 +163,121 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber20",
+    "test-file/test/cookies_test.js.html#lineNumber21",
     "Cookies #keys should return the keys of the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#length src/cookies.js~cookies#length,cookies#length",
-    "test-file/test/cookies_test.js.html#lineNumber35",
+    "test-file/test/cookies_test.js.html#lineNumber36",
     "Cookies #length",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber40",
+    "test-file/test/cookies_test.js.html#lineNumber42",
     "Cookies #length should return the number of cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber36",
+    "test-file/test/cookies_test.js.html#lineNumber37",
     "Cookies #length should return zero if the current document has no associated cookie",
     "test"
   ],
   [
     "cookies#onchanges src/cookies.js~cookies#onchanges,cookies#onchanges",
-    "test-file/test/cookies_test.js.html#lineNumber51",
+    "test-file/test/cookies_test.js.html#lineNumber53",
     "Cookies #onChanges",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber57",
+    "test-file/test/cookies_test.js.html#lineNumber59",
     "Cookies #onChanges should trigger an event when a cookie is added",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber94",
+    "test-file/test/cookies_test.js.html#lineNumber98",
     "Cookies #onChanges should trigger an event when a cookie is removed",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber74",
+    "test-file/test/cookies_test.js.html#lineNumber78",
     "Cookies #onChanges should trigger an event when a cookie is updated",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber114",
+    "test-file/test/cookies_test.js.html#lineNumber118",
     "Cookies #onChanges should trigger an event when all the cookies are removed",
     "test"
   ],
   [
     "cookies#remove src/cookies.js~cookies#remove,cookies#remove",
-    "test-file/test/cookies_test.js.html#lineNumber261",
+    "test-file/test/cookies_test.js.html#lineNumber266",
     "Cookies #remove()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber262",
+    "test-file/test/cookies_test.js.html#lineNumber267",
     "Cookies #remove() should properly remove the cookies associated with the current document",
     "test"
   ],
   [
     "cookies#set src/cookies.js~cookies#set,cookies#set",
-    "test-file/test/cookies_test.js.html#lineNumber280",
+    "test-file/test/cookies_test.js.html#lineNumber285",
     "Cookies #set()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber281",
+    "test-file/test/cookies_test.js.html#lineNumber286",
     "Cookies #set() should properly set the cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber293",
+    "test-file/test/cookies_test.js.html#lineNumber298",
     "Cookies #set() should throw an error if the specified key is a reserved word",
     "test"
   ],
   [
     "cookies#setobject src/cookies.js~cookies#setobject,cookies#setobject",
-    "test-file/test/cookies_test.js.html#lineNumber306",
+    "test-file/test/cookies_test.js.html#lineNumber312",
     "Cookies #setObject()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber307",
+    "test-file/test/cookies_test.js.html#lineNumber313",
     "Cookies #setObject() should properly serialize and set the cookies associated with the current document",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber322",
+    "test-file/test/cookies_test.js.html#lineNumber328",
     "Cookies #setObject() should throw an error if the specified key is a reserved word",
     "test"
   ],
   [
     "cookies#tostring src/cookies.js~cookies#tostring,cookies#tostring",
-    "test-file/test/cookies_test.js.html#lineNumber335",
+    "test-file/test/cookies_test.js.html#lineNumber342",
     "Cookies #toString()",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber340",
-    "Cookies #toString() should return a format like \"<key>=<value>; expires=<expires>; domain=<domain>; path=<path>; secure\" for an initialized instance",
+    "test-file/test/cookies_test.js.html#lineNumber348",
+    "Cookies #toString() should return a format like \"<key>=<value>(;<key>=<value>)*\" for an initialized instance",
     "test"
   ],
   [
     "",
-    "test-file/test/cookies_test.js.html#lineNumber336",
+    "test-file/test/cookies_test.js.html#lineNumber343",
     "Cookies #toString() should return an empty string for a newly created instance",
     "test"
   ],
@@ -582,6 +582,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/cookie_options.js~cookieoptions#[symbol.tostringtag]",
+    "class/src/cookie_options.js~CookieOptions.html#instance-get-[Symbol.toStringTag]",
+    "src/cookie_options.js~CookieOptions#[Symbol.toStringTag]",
+    "member"
+  ],
+  [
     "src/cookie_options.js~cookieoptions#constructor",
     "class/src/cookie_options.js~CookieOptions.html#instance-constructor-constructor",
     "src/cookie_options.js~CookieOptions#constructor",
@@ -640,6 +646,12 @@ window.esdocSearchIndex = [
     "class/src/cookies.js~Cookies.html#instance-method-[Symbol.iterator]",
     "src/cookies.js~Cookies#[Symbol.iterator]",
     "method"
+  ],
+  [
+    "src/cookies.js~cookies#[symbol.tostringtag]",
+    "class/src/cookies.js~Cookies.html#instance-get-[Symbol.toStringTag]",
+    "src/cookies.js~Cookies#[Symbol.toStringTag]",
+    "member"
   ],
   [
     "src/cookies.js~cookies#clear",

@@ -1,11 +1,11 @@
 {
   "coverage": "100%",
-  "expectCount": 33,
-  "actualCount": 33,
+  "expectCount": 35,
+  "actualCount": 35,
   "files": {
     "src/cookies.js": {
-      "expectCount": 21,
-      "actualCount": 21,
+      "expectCount": 22,
+      "actualCount": 22,
       "undocumentLines": []
     },
     "src/cookie_module.js": {
@@ -14,8 +14,8 @@
       "undocumentLines": []
     },
     "src/cookie_options.js": {
-      "expectCount": 10,
-      "actualCount": 10,
+      "expectCount": 11,
+      "actualCount": 11,
       "undocumentLines": []
     }
   }

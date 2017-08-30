@@ -40,9 +40,9 @@
 <div class="content" data-ice="content"><h1 data-ice="title">test/cookies_test.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
 
-import {expect} from &apos;chai&apos;;
-import CookieMock from &apos;ec.cookie-mock&apos;;
-import {CookieOptions, Cookies} from &apos;../src/index&apos;;
+const {expect} = require(&apos;chai&apos;);
+const {JSDOM} = require(&apos;jsdom&apos;);
+const {CookieOptions, Cookies} = require(&apos;../src&apos;);
 
 /**
  * @test {Cookies}
@@ -54,15 +54,16 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#keys&apos;, () =&gt; {
     it(&apos;should return an empty array if the current document has no associated cookie&apos;, () =&gt; {
-      expect(new Cookies(new CookieOptions, new CookieMock).keys).to.be.an(&apos;array&apos;).that.is.empty;
+      let {document} = (new JSDOM).window;
+      expect(new Cookies(new CookieOptions, document).keys).to.be.an(&apos;array&apos;).that.is.empty;
     });
 
     it(&apos;should return the keys of the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
 
-      let keys = new Cookies(new CookieOptions, backend).keys;
+      let keys = new Cookies(new CookieOptions, document).keys;
       expect(keys).to.be.an(&apos;array&apos;).and.have.lengthOf(2);
       expect(keys[0]).to.equal(&apos;foo&apos;);
       expect(keys[1]).to.equal(&apos;bar&apos;);
@@ -74,14 +75,15 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#length&apos;, () =&gt; {
     it(&apos;should return zero if the current document has no associated cookie&apos;, () =&gt; {
-      expect(new Cookies(new CookieOptions, new CookieMock)).to.have.lengthOf(0);
+      let {document} = (new JSDOM).window;
+      expect(new Cookies(new CookieOptions, document)).to.have.lengthOf(0);
     });
 
     it(&apos;should return the number of cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
-      expect(new Cookies(new CookieOptions, backend)).to.have.lengthOf(2);
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
+      expect(new Cookies(new CookieOptions, document)).to.have.lengthOf(2);
     });
   });
 
@@ -95,7 +97,9 @@ describe(&apos;Cookies&apos;, () =&gt; {
     );
 
     it(&apos;should trigger an event when a cookie is added&apos;, done =&gt; {
-      let cookies = new Cookies(new CookieOptions, new CookieMock);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
+
       subscription = cookies.onChanges.subscribe(changes =&gt; {
         expect(changes).to.be.an(&apos;array&apos;).and.have.lengthOf(1);
 
@@ -112,10 +116,10 @@ describe(&apos;Cookies&apos;, () =&gt; {
     });
 
     it(&apos;should trigger an event when a cookie is updated&apos;, done =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       subscription = cookies.onChanges.subscribe(changes =&gt; {
         expect(changes).to.be.an(&apos;array&apos;).and.have.lengthOf(1);
 
@@ -132,10 +136,10 @@ describe(&apos;Cookies&apos;, () =&gt; {
     });
 
     it(&apos;should trigger an event when a cookie is removed&apos;, done =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       subscription = cookies.onChanges.subscribe(changes =&gt; {
         expect(changes).to.be.an(&apos;array&apos;).and.have.lengthOf(1);
 
@@ -152,11 +156,11 @@ describe(&apos;Cookies&apos;, () =&gt; {
     });
 
     it(&apos;should trigger an event when all the cookies are removed&apos;, done =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       subscription = cookies.onChanges.subscribe(changes =&gt; {
         expect(changes).to.be.an(&apos;array&apos;).and.have.lengthOf(2);
 
@@ -184,17 +188,17 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#[Symbol.iterator]()&apos;, () =&gt; {
     it(&apos;should return a done iterator if the current document has no associated cookie&apos;, () =&gt; {
-      let cookies = new Cookies(new CookieOptions, new CookieMock);
+      let cookies = new Cookies(new CookieOptions, (new JSDOM).window.document);
       let iterator = cookies[Symbol.iterator]();
       expect(iterator.next().done).to.be.true;
     });
 
     it(&apos;should return a value iterator if the current document has associated cookies&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       let iterator = cookies[Symbol.iterator]();
 
       let next = iterator.next();
@@ -216,14 +220,14 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#clear()&apos;, () =&gt; {
     it(&apos;should remove all the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       cookies.clear();
-      expect(backend.cookie).to.not.contain(&apos;foo&apos;);
-      expect(backend.cookie).to.not.contain(&apos;bar&apos;);
+      expect(document.cookie).to.not.contain(&apos;foo&apos;);
+      expect(document.cookie).to.not.contain(&apos;bar&apos;);
     });
   });
 
@@ -232,16 +236,16 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#get()&apos;, () =&gt; {
     it(&apos;should properly get the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      let cookies = new Cookies(new CookieOptions, backend);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
 
       expect(cookies.get(&apos;foo&apos;)).to.be.null;
       expect(cookies.get(&apos;foo&apos;, &apos;123&apos;)).to.equal(&apos;123&apos;);
 
-      backend.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;foo=bar&apos;;
       expect(cookies.get(&apos;foo&apos;)).to.equal(&apos;bar&apos;);
 
-      backend.cookie = &apos;foo=123&apos;;
+      document.cookie = &apos;foo=123&apos;;
       expect(cookies.get(&apos;foo&apos;)).to.equal(&apos;123&apos;);
     });
   });
@@ -251,28 +255,28 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#getObject()&apos;, () =&gt; {
     it(&apos;should properly get the deserialized cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      let cookies = new Cookies(new CookieOptions, backend);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
 
       expect(cookies.getObject(&apos;foo&apos;)).to.be.null;
       expect(cookies.getObject(&apos;foo&apos;, {key: &apos;value&apos;})).to.deep.equal({key: &apos;value&apos;});
 
-      backend.cookie = &apos;foo=123&apos;;
+      document.cookie = &apos;foo=123&apos;;
       expect(cookies.getObject(&apos;foo&apos;)).to.equal(123);
 
-      backend.cookie = &apos;foo=%22bar%22&apos;;
+      document.cookie = &apos;foo=%22bar%22&apos;;
       expect(cookies.getObject(&apos;foo&apos;)).to.equal(&apos;bar&apos;);
 
-      backend.cookie = &apos;foo=%7B%22key%22%3A%22value%22%7D&apos;;
+      document.cookie = &apos;foo=%7B%22key%22%3A%22value%22%7D&apos;;
       expect(cookies.getObject(&apos;foo&apos;)).to.be.an(&apos;object&apos;)
         .and.have.property(&apos;key&apos;).that.equal(&apos;value&apos;);
     });
 
     it(&apos;should return the default value if the value can\&apos;t be deserialized&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       expect(cookies.getObject(&apos;foo&apos;, &apos;defaultValue&apos;)).to.equal(&apos;defaultValue&apos;);
     });
   });
@@ -282,14 +286,15 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#has()&apos;, () =&gt; {
     it(&apos;should return `false` if the current document has an associated cookie with the specified key&apos;, () =&gt; {
-      expect(new Cookies(new CookieOptions, new CookieMock).has(&apos;foo&apos;)).to.be.false;
+      let {document} = (new JSDOM).window;
+      expect(new Cookies(new CookieOptions, document).has(&apos;foo&apos;)).to.be.false;
     });
 
     it(&apos;should return `true` if the current document does not have an associated cookie with the specified key&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       expect(cookies.has(&apos;foo&apos;)).to.be.true;
       expect(cookies.has(&apos;bar&apos;)).to.be.false;
     });
@@ -300,17 +305,17 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#remove()&apos;, () =&gt; {
     it(&apos;should properly remove the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      backend.cookie = &apos;foo=bar&apos;;
-      backend.cookie = &apos;bar=baz&apos;;
+      let {document} = (new JSDOM).window;
+      document.cookie = &apos;foo=bar&apos;;
+      document.cookie = &apos;bar=baz&apos;;
 
-      let cookies = new Cookies(new CookieOptions, backend);
+      let cookies = new Cookies(new CookieOptions, document);
       cookies.remove(&apos;foo&apos;);
-      expect(backend.cookie).to.not.contain(&apos;foo&apos;);
-      expect(backend.cookie).to.contain(&apos;bar=baz&apos;);
+      expect(document.cookie).to.not.contain(&apos;foo&apos;);
+      expect(document.cookie).to.contain(&apos;bar=baz&apos;);
 
       cookies.remove(&apos;bar&apos;);
-      expect(backend.cookie).to.not.contain(&apos;bar&apos;);
+      expect(document.cookie).to.not.contain(&apos;bar&apos;);
     });
   });
 
@@ -319,19 +324,20 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#set()&apos;, () =&gt; {
     it(&apos;should properly set the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      let cookies = new Cookies(new CookieOptions, backend);
-      expect(backend.cookie).to.not.contain(&apos;foo&apos;);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
+      expect(document.cookie).to.not.contain(&apos;foo&apos;);
 
       cookies.set(&apos;foo&apos;, &apos;bar&apos;);
-      expect(backend.cookie).to.contain(&apos;foo=bar&apos;);
+      expect(document.cookie).to.contain(&apos;foo=bar&apos;);
 
       cookies.set(&apos;foo&apos;, &apos;123&apos;);
-      expect(backend.cookie).to.contain(&apos;foo=123&apos;);
+      expect(document.cookie).to.contain(&apos;foo=123&apos;);
     });
 
     it(&apos;should throw an error if the specified key is a reserved word&apos;, () =&gt; {
-      let cookies = new Cookies(new CookieOptions, new CookieMock);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
       expect(() =&gt; cookies.set(&apos;domain&apos;, &apos;foo&apos;)).to.throw(TypeError);
       expect(() =&gt; cookies.set(&apos;expires&apos;, &apos;foo&apos;)).to.throw(TypeError);
       expect(() =&gt; cookies.set(&apos;max-age&apos;, &apos;foo&apos;)).to.throw(TypeError);
@@ -345,22 +351,23 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#setObject()&apos;, () =&gt; {
     it(&apos;should properly serialize and set the cookies associated with the current document&apos;, () =&gt; {
-      let backend = new CookieMock;
-      let cookies = new Cookies(new CookieOptions, backend);
-      expect(backend.cookie).to.not.contain(&apos;foo&apos;);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
+      expect(document.cookie).to.not.contain(&apos;foo&apos;);
 
       cookies.setObject(&apos;foo&apos;, 123);
-      expect(backend.cookie).to.contain(&apos;foo=123&apos;);
+      expect(document.cookie).to.contain(&apos;foo=123&apos;);
 
       cookies.setObject(&apos;foo&apos;, &apos;bar&apos;);
-      expect(backend.cookie).to.contain(&apos;foo=%22bar%22&apos;);
+      expect(document.cookie).to.contain(&apos;foo=%22bar%22&apos;);
 
       cookies.setObject(&apos;foo&apos;, {key: &apos;value&apos;});
-      expect(backend.cookie).to.contain(&apos;foo=%7B%22key%22%3A%22value%22%7D&apos;);
+      expect(document.cookie).to.contain(&apos;foo=%7B%22key%22%3A%22value%22%7D&apos;);
     });
 
     it(&apos;should throw an error if the specified key is a reserved word&apos;, () =&gt; {
-      let cookies = new Cookies(new CookieOptions, new CookieMock);
+      let {document} = (new JSDOM).window;
+      let cookies = new Cookies(new CookieOptions, document);
       expect(() =&gt; cookies.setObject(&apos;domain&apos;, &apos;foo&apos;)).to.throw(TypeError);
       expect(() =&gt; cookies.setObject(&apos;expires&apos;, &apos;foo&apos;)).to.throw(TypeError);
       expect(() =&gt; cookies.setObject(&apos;max-age&apos;, &apos;foo&apos;)).to.throw(TypeError);
@@ -374,16 +381,19 @@ describe(&apos;Cookies&apos;, () =&gt; {
    */
   describe(&apos;#toString()&apos;, () =&gt; {
     it(&apos;should return an empty string for a newly created instance&apos;, () =&gt; {
-      expect(String(new Cookies(new CookieOptions, new CookieMock))).to.be.empty;
+      let {document} = (new JSDOM).window;
+      expect(String(new Cookies(new CookieOptions, document))).to.be.empty;
     });
 
-    it(&apos;should return a format like &quot;&lt;key&gt;=&lt;value&gt;; expires=&lt;expires&gt;; domain=&lt;domain&gt;; path=&lt;path&gt;; secure&quot; for an initialized instance&apos;, () =&gt; {
-      let cookies = new Cookies(new CookieOptions(null, &apos;/path&apos;, &apos;domain.com&apos;, true), new CookieMock);
+    it(&apos;should return a format like &quot;&lt;key&gt;=&lt;value&gt;(;&lt;key&gt;=&lt;value&gt;)*&quot; for an initialized instance&apos;, () =&gt; {
+      let {document} = new JSDOM(&apos;&apos;, {url: &apos;https://domain.com/path&apos;}).window;
+      let cookies = new Cookies(new CookieOptions(null, &apos;/path&apos;, &apos;domain.com&apos;, true), document);
+
       cookies.set(&apos;foo&apos;, &apos;bar&apos;);
-      expect(String(cookies)).to.equal(&apos;foo=bar; domain=domain.com; path=/path; secure&apos;);
+      expect(String(cookies)).to.equal(&apos;foo=bar&apos;);
 
       cookies.set(&apos;bar&apos;, &apos;baz&apos;, new Date(Date.now() + 3600000));
-      expect(String(cookies)).to.contain(&apos;bar=baz; expires=&apos;).and.contain(&apos;domain=domain.com; path=/path; secure&apos;);
+      expect(String(cookies)).to.equal(&apos;foo=bar; bar=baz&apos;);
     });
   });
 });
